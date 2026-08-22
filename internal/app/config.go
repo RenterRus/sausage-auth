@@ -30,8 +30,11 @@ type Config struct {
 	PSQL DB `validate:"required"`
 
 	// Ключ должен быть строго 16, 24 или 32 байта (для AES-128, 192 или 256)
-	SecretKey string `validate:"required,gte=32"`
-	Issuer    string `validate:"required"`
+	OTPHashSecretKey string `validate:"required,gte=32"`
+	JWTHashSecretKey string `validate:"required,gte=32"`
+	JWTSecretKey     string `validate:"required,gte=32"`
+
+	Issuer string `validate:"required"`
 }
 
 func ReadConfig(path string, fileName string) (*Config, error) {

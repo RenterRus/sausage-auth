@@ -6,18 +6,24 @@ import (
 
 	"github.com/RenterRus/sausage-profile/internal/entity"
 	"github.com/RenterRus/sausage-profile/internal/repo/psql"
+	"github.com/RenterRus/sausage-profile/internal/usecase/hashing"
+	"github.com/RenterRus/sausage-profile/internal/usecase/jwt"
 	"github.com/RenterRus/sausage-profile/internal/usecase/otp"
 )
 
 type register struct {
-	otpRepo   otp.OTP
-	usersRepo psql.UsersRepo
+	otpRepo    otp.OTP
+	jwtHashing hashing.Hashing
+	usersRepo  psql.UsersRepo
+	jwtManager jwt.JWT
 }
 
-func NewRegisterManager(otpRepo otp.OTP, usersRepo psql.UsersRepo) Register {
+func NewRegisterManager(otpRepo otp.OTP, hash hashing.Hashing, jwtManager jwt.JWT, usersRepo psql.UsersRepo) Register {
 	return &register{
-		otpRepo:   otpRepo,
-		usersRepo: usersRepo,
+		otpRepo:    otpRepo,
+		jwtHashing: hash,
+		usersRepo:  usersRepo,
+		jwtManager: jwtManager,
 	}
 }
 

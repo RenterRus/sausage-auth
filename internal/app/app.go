@@ -9,6 +9,8 @@ import (
 	protoServe "github.com/RenterRus/sausage-profile/internal/controller/grpc"
 	"github.com/RenterRus/sausage-profile/internal/repo/psql"
 	"github.com/RenterRus/sausage-profile/internal/usecase"
+	"github.com/RenterRus/sausage-profile/internal/usecase/hashing"
+	"github.com/RenterRus/sausage-profile/internal/usecase/jwt"
 	"github.com/RenterRus/sausage-profile/internal/usecase/otp"
 	"github.com/sourcegraph/conc/pool"
 	"google.golang.org/grpc"
@@ -64,7 +66,9 @@ func (a *App) Run() error {
 		}
 
 		v1.RegisterAuthServiceServer(s, protoServe.NewManager(usecase.NewRegisterManager(
-			otp.NewOTPManager([]byte(a.conf.SecretKey)[:secretSize], a.conf.Issuer),
+			otp.NewOTPManager(hashing.NewHashingManager([]byte(a.conf.OTPHashSecretKey)[:secretSize]), a.conf.Issuer),
+			hashing.NewHashingManager([]byte(a.conf.JWTHashSecretKey)[:secretSize]),
+			jwt.NewJWTManager([]byte(a.conf.JWTSecretKey)[:secretSize]),
 			users,
 		)))
 

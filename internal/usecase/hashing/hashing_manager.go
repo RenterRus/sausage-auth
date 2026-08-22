@@ -1,4 +1,4 @@
-package common
+package hashing
 
 import (
 	"crypto/aes"
@@ -9,9 +9,19 @@ import (
 	"io"
 )
 
+type hashManager struct {
+	key []byte
+}
+
+func NewHashingManager(key []byte) Hashing {
+	return &hashManager{
+		key: key,
+	}
+}
+
 // Encrypt шифрует строку и возвращает Base64-код
-func Encrypt(plainText string, key []byte) (string, error) {
-	block, err := aes.NewCipher(key)
+func (h *hashManager) Encrypt(plainText string) (string, error) {
+	block, err := aes.NewCipher(h.key)
 	if err != nil {
 		return "", err
 	}
@@ -31,13 +41,13 @@ func Encrypt(plainText string, key []byte) (string, error) {
 }
 
 // Decrypt расшифровывает Base64-строку обратно в текст
-func Decrypt(secureText string, key []byte) (string, error) {
+func (h *hashManager) Decrypt(secureText string) (string, error) {
 	cipherBytes, err := base64.StdEncoding.DecodeString(secureText)
 	if err != nil {
 		return "", err
 	}
 
-	block, err := aes.NewCipher(key)
+	block, err := aes.NewCipher(h.key)
 	if err != nil {
 		return "", err
 	}

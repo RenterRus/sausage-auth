@@ -3,19 +3,19 @@ package otp
 import (
 	"fmt"
 
-	"github.com/RenterRus/sausage-profile/internal/usecase/common"
+	"github.com/RenterRus/sausage-profile/internal/usecase/hashing"
 	"github.com/pquerna/otp/totp"
 )
 
 type otpManager struct {
 	// Ключ должен быть строго 16, 24 или 32 байта (для AES-128, 192 или 256)
-	key    []byte
+	hash   hashing.Hashing
 	issuer string
 }
 
-func NewOTPManager(key []byte, issuer string) OTP {
+func NewOTPManager(hashing hashing.Hashing, issuer string) OTP {
 	return &otpManager{
-		key:    key,
+		hash:   hashing,
 		issuer: issuer,
 	}
 }
@@ -31,7 +31,7 @@ func (o *otpManager) GenerateHash(username string) (string, string, error) {
 	}
 
 	// Secret() — строка для сохранения в БД (в зашифрованном виде!)
-	secretKey, err := common.Encrypt(key.Secret(), o.key)
+	secretKey, err := o.hash.Encrypt(key.Secret())
 	if err != nil {
 		return "", "", fmt.Errorf("GenerateHash.encrypt: %w", err)
 	}
@@ -41,7 +41,7 @@ func (o *otpManager) GenerateHash(username string) (string, string, error) {
 }
 
 func (o *otpManager) ValidateCode(passcode, secretKey string) (bool, error) {
-	secret, err := common.Decrypt(secretKey, o.key)
+	secret, err := o.hash.Decrypt(secretKey)
 	if err != nil {
 		return false, fmt.Errorf("ValidateCode.decrypt: %w", err)
 	}

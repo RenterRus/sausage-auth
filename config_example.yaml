@@ -12,5 +12,7 @@ psql:
     dbname: dbname
 
 issuer: "sausage"
-secretkey: "32 byte key"
 
+OTPHashSecretKey: "32 byte key"
+JWTHashSecretKey: "32 byte key"
+JWTSecretKey: "32 byte key"
