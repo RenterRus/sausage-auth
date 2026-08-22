@@ -8,12 +8,15 @@ import (
 	"github.com/RenterRus/sausage-profile/internal/repo/psql/db"
 )
 
-func (u *UserRepo) GetRefreshToken(ctx context.Context, login *string) (entity.GetRefreshTokenRow, error) {
+func (u *UserRepo) GetRefreshToken(ctx context.Context, login, hash *string) (entity.GetRefreshTokenRow, error) {
 	if login == nil || *login == "" {
 		return entity.GetRefreshTokenRow{}, fmt.Errorf("GetRefreshToken: %w", entity.ErrParametrNoFound)
 	}
 
-	resp, err := u.Queries.GetRefreshToken(ctx, login)
+	resp, err := u.Queries.GetRefreshToken(ctx, db.GetRefreshTokenParams{
+		UserLogin: login,
+		Hash:      hash,
+	})
 	if err != nil {
 		return entity.GetRefreshTokenRow{}, fmt.Errorf("GetRefreshToken.GetRefreshToken: %w", err)
 	}
@@ -22,6 +25,7 @@ func (u *UserRepo) GetRefreshToken(ctx context.Context, login *string) (entity.G
 		RefreshHash: resp.RefreshHash,
 		IsExpired:   resp.IsExpired,
 		Block:       resp.Block,
+		UserAgent:   resp.UserAgent,
 	}, nil
 }
 
@@ -40,10 +44,47 @@ func (u *UserRepo) SetBlockRefresh(ctx context.Context, refreshHash *string) err
 func (u *UserRepo) SetRefreshHash(ctx context.Context, arg entity.SetRefreshHashParams) error {
 	if err := u.Queries.SetRefreshHash(ctx, db.SetRefreshHashParams{
 		RefreshHash: arg.RefreshHash,
-		Login:       arg.Login,
-		ExpiredAt:   arg.ExpiredAt,
+		UserLogin:   arg.Login,
+		UserAgent:   arg.UserAgent,
 	}); err != nil {
 		return fmt.Errorf("SetRefreshHash.SetRefreshHash: %w", err)
+	}
+
+	return nil
+}
+
+func (u *UserRepo) GetUUIDByLogin(ctx context.Context, login *string) (string, error) {
+	if login == nil || *login == "" {
+		return "", fmt.Errorf("GetUUIDByLogin: %w", entity.ErrParametrNoFound)
+	}
+
+	uuid, err := u.Queries.GetUUIDByLogin(ctx, login)
+	if err != nil {
+		return "", fmt.Errorf("GetUUIDByLogin.GetUUIDByLogin: %w", err)
+	}
+
+	return uuid, nil
+}
+
+func (u *UserRepo) RemoveRefreshByHash(ctx context.Context, refreshHash *string) error {
+	if refreshHash == nil || *refreshHash == "" {
+		return fmt.Errorf("RemoveRefreshByHash: %w", entity.ErrParametrNoFound)
+	}
+
+	if err := u.Queries.RemoveRefreshByHash(ctx, refreshHash); err != nil {
+		return fmt.Errorf("RemoveRefreshByHash.RemoveRefreshByHash: %w", err)
+	}
+
+	return nil
+}
+
+func (u *UserRepo) RemoveRefreshByLogin(ctx context.Context, userLogin *string) error {
+	if userLogin == nil || *userLogin == "" {
+		return fmt.Errorf("RemoveRefreshByLogin: %w", entity.ErrParametrNoFound)
+	}
+
+	if err := u.Queries.RemoveRefreshByLogin(ctx, userLogin); err != nil {
+		return fmt.Errorf("RemoveRefreshByLogin.RemoveRefreshByLogin: %w", err)
 	}
 
 	return nil

@@ -15,11 +15,14 @@ type Querier interface {
 	Confirmed(ctx context.Context, login *string) error
 	//GetRefreshToken
 	//
-	//  select refresh_hash,
-	//  (expired_at <= now()) as is_expired,
-	//  exists(select 1 from blacklist_refresh where refresh_hash = (select refresh_hash from users u where u.user_login = $1)) as block
-	//  from users u where u.user_login = $1
-	GetRefreshToken(ctx context.Context, login *string) (GetRefreshTokenRow, error)
+	//  select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent,
+	//  exists(select 1 from blacklist_refresh b where b.refresh_hash = r.refresh_hash) as block
+	//  from refreshlist r where r.user_login = $1 and r.refresh_hash = $2
+	GetRefreshToken(ctx context.Context, arg GetRefreshTokenParams) (GetRefreshTokenRow, error)
+	//GetUUIDByLogin
+	//
+	//  select uuid from users WHERE user_login = $1
+	GetUUIDByLogin(ctx context.Context, login *string) (string, error)
 	//Hash
 	//
 	//  select otp_hash from users where user_login = $1
@@ -32,16 +35,21 @@ type Querier interface {
 	//
 	//  insert into users (user_login, uuid, otp_hash, otp_link, created_at, last_sign_up_at) values ($1, gen_random_uuid(), $2, $3, now(), now())
 	Register(ctx context.Context, arg RegisterParams) error
+	//RemoveRefreshByHash
+	//
+	//  delete from refreshlist where refresh_hash = $1
+	RemoveRefreshByHash(ctx context.Context, refreshHash *string) error
+	//RemoveRefreshByLogin
+	//
+	//  delete from refreshlist where user_login = $1
+	RemoveRefreshByLogin(ctx context.Context, userLogin *string) error
 	//SetBlockRefresh
 	//
 	//  insert into blacklist_refresh (refresh_hash) values ($1)
 	SetBlockRefresh(ctx context.Context, refreshHash *string) error
 	//SetRefreshHash
 	//
-	//  update users
-	//  set refresh_hash = $1,
-	//  expired_at = $2
-	//  where user_login = $3
+	//  insert into refreshlist(refresh_hash, user_login, user_agent) values($1, $2, $3)
 	SetRefreshHash(ctx context.Context, arg SetRefreshHashParams) error
 }
 

@@ -7,10 +7,7 @@ create table if not exists users (
     
     confirmed boolean default false,    
     created_at timestamp default now(),
-    last_sign_up_at timestamp default now(),
-
-    refresh_hash text,
-    expired_at timestamp
+    last_sign_up_at timestamp default now()
 )
 
 

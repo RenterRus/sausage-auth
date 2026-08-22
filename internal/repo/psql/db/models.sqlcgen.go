@@ -12,6 +12,13 @@ type BlacklistRefresh struct {
 	RefreshHash string `db:"refresh_hash"`
 }
 
+type Refreshlist struct {
+	RefreshHash string           `db:"refresh_hash"`
+	UserLogin   string           `db:"user_login"`
+	UserAgent   *string          `db:"user_agent"`
+	ExpiredAt   pgtype.Timestamp `db:"expired_at"`
+}
+
 type User struct {
 	UserLogin    string           `db:"user_login"`
 	Uuid         string           `db:"uuid"`
@@ -20,6 +27,4 @@ type User struct {
 	Confirmed    *bool            `db:"confirmed"`
 	CreatedAt    pgtype.Timestamp `db:"created_at"`
 	LastSignUpAt pgtype.Timestamp `db:"last_sign_up_at"`
-	RefreshHash  *string          `db:"refresh_hash"`
-	ExpiredAt    pgtype.Timestamp `db:"expired_at"`
 }

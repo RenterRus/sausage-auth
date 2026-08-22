@@ -7,34 +7,79 @@ package db
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getRefreshToken = `-- name: GetRefreshToken :one
-select refresh_hash, 
-(expired_at <= now()) as is_expired, 
-exists(select 1 from blacklist_refresh where refresh_hash = (select refresh_hash from users u where u.user_login = $1)) as block 
-from users u where u.user_login = $1
+select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent,
+exists(select 1 from blacklist_refresh b where b.refresh_hash = r.refresh_hash) as block 
+from refreshlist r where r.user_login = $1 and r.refresh_hash = $2
 `
 
+type GetRefreshTokenParams struct {
+	UserLogin *string `db:"user_login"`
+	Hash      *string `db:"hash"`
+}
+
 type GetRefreshTokenRow struct {
-	RefreshHash *string `db:"refresh_hash"`
+	RefreshHash string  `db:"refresh_hash"`
 	IsExpired   bool    `db:"is_expired"`
+	UserAgent   *string `db:"user_agent"`
 	Block       bool    `db:"block"`
 }
 
 // GetRefreshToken
 //
-//	select refresh_hash,
-//	(expired_at <= now()) as is_expired,
-//	exists(select 1 from blacklist_refresh where refresh_hash = (select refresh_hash from users u where u.user_login = $1)) as block
-//	from users u where u.user_login = $1
-func (q *Queries) GetRefreshToken(ctx context.Context, login *string) (GetRefreshTokenRow, error) {
-	row := q.db.QueryRow(ctx, getRefreshToken, login)
+//	select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent,
+//	exists(select 1 from blacklist_refresh b where b.refresh_hash = r.refresh_hash) as block
+//	from refreshlist r where r.user_login = $1 and r.refresh_hash = $2
+func (q *Queries) GetRefreshToken(ctx context.Context, arg GetRefreshTokenParams) (GetRefreshTokenRow, error) {
+	row := q.db.QueryRow(ctx, getRefreshToken, arg.UserLogin, arg.Hash)
 	var i GetRefreshTokenRow
-	err := row.Scan(&i.RefreshHash, &i.IsExpired, &i.Block)
+	err := row.Scan(
+		&i.RefreshHash,
+		&i.IsExpired,
+		&i.UserAgent,
+		&i.Block,
+	)
 	return i, err
+}
+
+const getUUIDByLogin = `-- name: GetUUIDByLogin :one
+select uuid from users WHERE user_login = $1
+`
+
+// GetUUIDByLogin
+//
+//	select uuid from users WHERE user_login = $1
+func (q *Queries) GetUUIDByLogin(ctx context.Context, login *string) (string, error) {
+	row := q.db.QueryRow(ctx, getUUIDByLogin, login)
+	var uuid string
+	err := row.Scan(&uuid)
+	return uuid, err
+}
+
+const removeRefreshByHash = `-- name: RemoveRefreshByHash :exec
+delete from refreshlist where refresh_hash = $1
+`
+
+// RemoveRefreshByHash
+//
+//	delete from refreshlist where refresh_hash = $1
+func (q *Queries) RemoveRefreshByHash(ctx context.Context, refreshHash *string) error {
+	_, err := q.db.Exec(ctx, removeRefreshByHash, refreshHash)
+	return err
+}
+
+const removeRefreshByLogin = `-- name: RemoveRefreshByLogin :exec
+delete from refreshlist where user_login = $1
+`
+
+// RemoveRefreshByLogin
+//
+//	delete from refreshlist where user_login = $1
+func (q *Queries) RemoveRefreshByLogin(ctx context.Context, userLogin *string) error {
+	_, err := q.db.Exec(ctx, removeRefreshByLogin, userLogin)
+	return err
 }
 
 const setBlockRefresh = `-- name: SetBlockRefresh :exec
@@ -50,25 +95,19 @@ func (q *Queries) SetBlockRefresh(ctx context.Context, refreshHash *string) erro
 }
 
 const setRefreshHash = `-- name: SetRefreshHash :exec
-update users 
-set refresh_hash = $1,
-expired_at = $2
-where user_login = $3
+insert into refreshlist(refresh_hash, user_login, user_agent) values($1, $2, $3)
 `
 
 type SetRefreshHashParams struct {
-	RefreshHash *string          `db:"refresh_hash"`
-	ExpiredAt   pgtype.Timestamp `db:"expired_at"`
-	Login       *string          `db:"login"`
+	RefreshHash *string `db:"refresh_hash"`
+	UserLogin   *string `db:"user_login"`
+	UserAgent   *string `db:"user_agent"`
 }
 
 // SetRefreshHash
 //
-//	update users
-//	set refresh_hash = $1,
-//	expired_at = $2
-//	where user_login = $3
+//	insert into refreshlist(refresh_hash, user_login, user_agent) values($1, $2, $3)
 func (q *Queries) SetRefreshHash(ctx context.Context, arg SetRefreshHashParams) error {
-	_, err := q.db.Exec(ctx, setRefreshHash, arg.RefreshHash, arg.ExpiredAt, arg.Login)
+	_, err := q.db.Exec(ctx, setRefreshHash, arg.RefreshHash, arg.UserLogin, arg.UserAgent)
 	return err
 }
