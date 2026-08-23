@@ -52,9 +52,6 @@ func ReadConfig(path string, fileName string) (*Config, error) {
 	}
 
 	res := &Config{}
-	fmt.Println("B")
-	fmt.Println(string(b))
-	fmt.Println("B")
 	err = yaml.Unmarshal(b, res)
 	if err != nil {
 		return nil, fmt.Errorf("ReadConfig (Unmarshal): %w", err)

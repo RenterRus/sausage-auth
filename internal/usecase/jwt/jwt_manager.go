@@ -67,7 +67,7 @@ func (j *jwtManager) Parse(token string) (entity.BaseJWT, error) {
 func (j *jwtManager) generateToken(userID string, expired time.Time) (string, error) {
 	token, err := gojwt.NewWithClaims(gojwt.SigningMethodHS384, gojwt.MapClaims{
 		"sub": userID,
-		"exp": expired,
+		"exp": expired.Unix(),
 	}).SignedString(j.key)
 	if err != nil {
 		return "", fmt.Errorf("generateToken: %w", err)
