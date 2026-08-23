@@ -44,10 +44,54 @@ func (m *Manager) ValidateToken(ctx context.Context, req *proto.ValidateTokenReq
 
 	uuid, err := m.profile.Validation(ctx, req.GetAccess())
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "RevokeSession.All: %w", err)
+		return nil, status.Errorf(codes.Internal, "ValidateToken.Validation: %w", err)
 	}
 
 	return &proto.ValidateTokenResponse{
 		Uuid: *uuid,
+	}, nil
+}
+
+func (m *Manager) LoginOTP(ctx context.Context, req *proto.LoginOTPRequest) (*proto.LoginOTPResponse, error) {
+	if req == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "LoginOTP: %w", entity.ErrParametrNoFound)
+	}
+
+	tokens, err := m.profile.LoginOTP(ctx, usecase.LoginRequest{
+		Login:     req.GetLogin(),
+		UserAgent: req.GetUserAgent(),
+		Code:      req.GetCode(),
+	})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "LoginOTP.LoginOTP: %w", err)
+	}
+
+	return &proto.LoginOTPResponse{
+		Tokens: &proto.Tokens{
+			Access:  *tokens.AccessToken,
+			Refresh: *tokens.RefreshToken,
+		},
+	}, nil
+}
+
+func (m *Manager) RefreshToken(ctx context.Context, req *proto.RefreshRequest) (*proto.RefreshResponse, error) {
+	if req == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "LoginOTP: %w", entity.ErrParametrNoFound)
+	}
+
+	tokens, err := m.profile.Refresh(ctx, usecase.RefreshRequest{
+		Login:        req.GetLogin(),
+		UserAgent:    req.GetUserAgent(),
+		RefreshToken: req.GetRefreshToken(),
+	})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "LoginOTP.LoginOTP: %w", err)
+	}
+
+	return &proto.RefreshResponse{
+		Tokens: &proto.Tokens{
+			Access:  *tokens.AccessToken,
+			Refresh: *tokens.RefreshToken,
+		},
 	}, nil
 }

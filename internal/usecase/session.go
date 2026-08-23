@@ -65,13 +65,13 @@ func (r *profile) Validation(ctx context.Context, accessHash string) (*string, e
 	return &uuid, nil
 }
 
-func (r *profile) LoginOTP(ctx context.Context, login, userAgent, code string) (entity.Tokens, error) {
-	hash, err := r.usersRepo.OtpHash(ctx, &login)
+func (r *profile) LoginOTP(ctx context.Context, req LoginRequest) (entity.Tokens, error) {
+	hash, err := r.usersRepo.OtpHash(ctx, &req.Login)
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.Hash: %w", err)
 	}
 
-	isValid, err := r.otpRepo.ValidateCode(code, hash)
+	isValid, err := r.otpRepo.ValidateCode(req.Code, hash)
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.ValidateCode: %w", err)
 	}
@@ -81,8 +81,8 @@ func (r *profile) LoginOTP(ctx context.Context, login, userAgent, code string) (
 	}
 
 	hashs, err := r.usersRepo.DeleteOldRefresh(ctx, entity.DeleteOldRefreshParams{
-		UserLogin: &login,
-		UserAgent: &userAgent,
+		UserLogin: &req.Login,
+		UserAgent: &req.UserAgent,
 	})
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.DeleteOldRefresh: %w", err)
@@ -96,12 +96,12 @@ func (r *profile) LoginOTP(ctx context.Context, login, userAgent, code string) (
 		}
 	}
 
-	access, err := r.jwtManager.GenAccess(login)
+	access, err := r.jwtManager.GenAccess(req.Login)
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.GenAccess: %w", err)
 	}
 
-	refresh, err := r.jwtManager.GenRefresh(login)
+	refresh, err := r.jwtManager.GenRefresh(req.Login)
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.GenRefresh: %w", err)
 	}
@@ -118,13 +118,13 @@ func (r *profile) LoginOTP(ctx context.Context, login, userAgent, code string) (
 
 	if err = r.usersRepo.SetRefreshHash(ctx, entity.SetRefreshHashParams{
 		RefreshHash: &hashRefresh,
-		UserAgent:   &userAgent,
-		Login:       &login,
+		UserAgent:   &req.UserAgent,
+		Login:       &req.Login,
 	}); err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.SetRefreshHash: %w", err)
 	}
 
-	if err = r.usersRepo.UpdateLastSighUp(ctx, &login); err != nil {
+	if err = r.usersRepo.UpdateLastSighUp(ctx, &req.Login); err != nil {
 		fmt.Println("!!! INTO LOG. UpdateLastSighUp:", err)
 	}
 
@@ -134,8 +134,8 @@ func (r *profile) LoginOTP(ctx context.Context, login, userAgent, code string) (
 	}, nil
 }
 
-func (r *profile) Refresh(ctx context.Context, login, userAgent, refreshHash string) (entity.Tokens, error) {
-	oldRef, err := r.usersRepo.GetRefreshToken(ctx, &login, &refreshHash)
+func (r *profile) Refresh(ctx context.Context, req RefreshRequest) (entity.Tokens, error) {
+	oldRef, err := r.usersRepo.GetRefreshToken(ctx, &req.Login, &req.RefreshToken)
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("Refresh.GetRefreshToken: %w", err)
 	}
@@ -149,8 +149,8 @@ func (r *profile) Refresh(ctx context.Context, login, userAgent, refreshHash str
 	}
 
 	hashs, err := r.usersRepo.DeleteOldRefresh(ctx, entity.DeleteOldRefreshParams{
-		UserLogin: &login,
-		UserAgent: &userAgent,
+		UserLogin: &req.Login,
+		UserAgent: &req.UserAgent,
 	})
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.DeleteOldRefresh: %w", err)
@@ -164,12 +164,12 @@ func (r *profile) Refresh(ctx context.Context, login, userAgent, refreshHash str
 		}
 	}
 
-	access, err := r.jwtManager.GenAccess(login)
+	access, err := r.jwtManager.GenAccess(req.Login)
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.GenAccess: %w", err)
 	}
 
-	refresh, err := r.jwtManager.GenRefresh(login)
+	refresh, err := r.jwtManager.GenRefresh(req.Login)
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.GenRefresh: %w", err)
 	}
@@ -186,13 +186,13 @@ func (r *profile) Refresh(ctx context.Context, login, userAgent, refreshHash str
 
 	if err = r.usersRepo.SetRefreshHash(ctx, entity.SetRefreshHashParams{
 		RefreshHash: &hashRefresh,
-		UserAgent:   &userAgent,
-		Login:       &login,
+		UserAgent:   &req.UserAgent,
+		Login:       &req.Login,
 	}); err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.SetRefreshHash: %w", err)
 	}
 
-	if err = r.usersRepo.UpdateLastSighUp(ctx, &login); err != nil {
+	if err = r.usersRepo.UpdateLastSighUp(ctx, &req.Login); err != nil {
 		fmt.Println("!!! INTO LOG. UpdateLastSighUp:", err)
 	}
 

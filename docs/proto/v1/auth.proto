@@ -54,6 +54,27 @@ message Tokens{
   string refresh = 2;
 }
 
+message LoginOTPRequest{
+  string login = 1;
+  string userAgent = 2;
+  string code = 3;
+}
+
+message LoginOTPResponse{
+  Tokens tokens = 1;
+}
+
+message RefreshRequest{
+  string login = 1;
+  string userAgent = 2;
+  string refreshToken = 3;
+}
+
+message RefreshResponse{
+  Tokens tokens = 1;
+}
+
+
 service AuthService {
 
   
@@ -65,8 +86,7 @@ service AuthService {
   
     rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
 
-  // Login
+    rpc LoginOTP(LoginOTPRequest) returns (LoginOTPResponse);
 
-  // RefreshToken
-  
+    rpc RefreshToken(RefreshRequest) returns (RefreshResponse);
 }

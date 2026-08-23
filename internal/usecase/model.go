@@ -13,12 +13,24 @@ const (
 	REVOKE_ALL
 )
 
+type LoginRequest struct {
+	Login     string
+	UserAgent string
+	Code      string
+}
+
+type RefreshRequest struct {
+	Login        string
+	UserAgent    string
+	RefreshToken string
+}
+
 type Register interface {
 	Registration(ctx context.Context, login string) (string, error)
 	Confirmed(ctx context.Context, login, code string) error
 
-	LoginOTP(ctx context.Context, login, userAgent, code string) (entity.Tokens, error)
-	Refresh(ctx context.Context, login, userAgent, refreshToken string) (entity.Tokens, error)
+	LoginOTP(ctx context.Context, req LoginRequest) (entity.Tokens, error)
+	Refresh(ctx context.Context, req RefreshRequest) (entity.Tokens, error)
 
 	Logout(ctx context.Context, sign *string, revokeType RevokeType) error
 
