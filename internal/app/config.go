@@ -14,7 +14,6 @@ type Server struct {
 	Enable bool   `validate:"required"`
 }
 
-// "postgres://username:password@localhost:5432/database_name
 type DB struct {
 	Provider string `validate:"required"`
 	Username string `validate:"required"`
