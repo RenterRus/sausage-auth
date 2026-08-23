@@ -36,3 +36,18 @@ func (m *Manager) RevokeSession(ctx context.Context, req *proto.RevokeSessionReq
 		Status: entity.STATUS_OK,
 	}, nil
 }
+
+func (m *Manager) ValidateToken(ctx context.Context, req *proto.ValidateTokenRequest) (*proto.ValidateTokenResponse, error) {
+	if req == nil || req.GetAccess() == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "ValidateToken: %w", entity.ErrParametrNoFound)
+	}
+
+	uuid, err := m.profile.Validation(ctx, req.GetAccess())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "RevokeSession.All: %w", err)
+	}
+
+	return &proto.ValidateTokenResponse{
+		Uuid: *uuid,
+	}, nil
+}

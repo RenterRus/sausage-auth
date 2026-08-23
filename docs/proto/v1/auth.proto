@@ -41,6 +41,19 @@ message RevokeSessionResponse{
   string status = 1;
 }
 
+message ValidateTokenRequest{
+  string access = 1;
+}
+
+message ValidateTokenResponse{
+  string uuid = 1;
+}
+
+message Tokens{
+  string access = 1;
+  string refresh = 2;
+}
+
 service AuthService {
 
   
@@ -50,10 +63,10 @@ service AuthService {
 
     rpc RevokeSession(RevokeSessionRequest) returns (RevokeSessionResponse);
   
-  // Auth
+    rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+
+  // Login
 
   // RefreshToken
-
-  // ValidateToken
   
 }
