@@ -21,20 +21,6 @@ func (q *Queries) Confirmed(ctx context.Context, login *string) error {
 	return err
 }
 
-const hash = `-- name: Hash :one
-select otp_hash from users where user_login = $1
-`
-
-// Hash
-//
-//	select otp_hash from users where user_login = $1
-func (q *Queries) Hash(ctx context.Context, login *string) (string, error) {
-	row := q.db.QueryRow(ctx, hash, login)
-	var otp_hash string
-	err := row.Scan(&otp_hash)
-	return otp_hash, err
-}
-
 const isExist = `-- name: IsExist :one
 select exists(select 1 from users WHERE user_login = $1)
 `
@@ -47,6 +33,20 @@ func (q *Queries) IsExist(ctx context.Context, login *string) (bool, error) {
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
+}
+
+const otpHash = `-- name: OtpHash :one
+select otp_hash from users where user_login = $1
+`
+
+// OtpHash
+//
+//	select otp_hash from users where user_login = $1
+func (q *Queries) OtpHash(ctx context.Context, login *string) (string, error) {
+	row := q.db.QueryRow(ctx, otpHash, login)
+	var otp_hash string
+	err := row.Scan(&otp_hash)
+	return otp_hash, err
 }
 
 const register = `-- name: Register :exec

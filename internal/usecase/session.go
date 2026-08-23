@@ -57,7 +57,7 @@ func (r *profile) Validation(ctx context.Context, accessHash string) (*string, e
 		return nil, fmt.Errorf("Validation.Parse(IsExpired): %w", entity.ErrTokenInvalid)
 	}
 
-	if !jwtDetail.IsExpired {
+	if jwtDetail.IsExpired {
 		return nil, fmt.Errorf("Validation.Parse(IsExpired): %w", entity.ErrTokenExpired)
 	}
 
@@ -70,7 +70,7 @@ func (r *profile) Validation(ctx context.Context, accessHash string) (*string, e
 }
 
 func (r *profile) LoginOTP(ctx context.Context, login, userAgent, code string) (entity.Tokens, error) {
-	hash, err := r.usersRepo.Hash(ctx, &login)
+	hash, err := r.usersRepo.OtpHash(ctx, &login)
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.Hash: %w", err)
 	}
@@ -138,7 +138,70 @@ func (r *profile) LoginOTP(ctx context.Context, login, userAgent, code string) (
 	}, nil
 }
 
-// !!!
 func (r *profile) Refresh(ctx context.Context, login, userAgent, refreshHash string) (entity.Tokens, error) {
-	return entity.Tokens{}, nil
+	oldRef, err := r.usersRepo.GetRefreshToken(ctx, &login, &refreshHash)
+	if err != nil {
+		return entity.Tokens{}, fmt.Errorf("Refresh.GetRefreshToken: %w", err)
+	}
+
+	if oldRef.IsExpired {
+		return entity.Tokens{}, fmt.Errorf("Refresh.Valid(exp): %w", entity.ErrTokenExpired)
+	}
+
+	if oldRef.Block {
+		return entity.Tokens{}, fmt.Errorf("Refresh.Valid(block): %w", entity.ErrTokenBlocked)
+	}
+
+	hashs, err := r.usersRepo.DeleteOldRefresh(ctx, entity.DeleteOldRefreshParams{
+		UserLogin: &login,
+		UserAgent: &userAgent,
+	})
+	if err != nil {
+		return entity.Tokens{}, fmt.Errorf("LoginOTP.DeleteOldRefresh: %w", err)
+	}
+
+	if len(hashs) > 0 {
+		for i := range hashs {
+			if err := r.usersRepo.SetBlockRefresh(ctx, &hashs[i]); err != nil {
+				return entity.Tokens{}, fmt.Errorf("LoginOTP.SetBlockRefresh: %w", err)
+			}
+		}
+	}
+
+	access, err := r.jwtManager.GenAccess(login)
+	if err != nil {
+		return entity.Tokens{}, fmt.Errorf("LoginOTP.GenAccess: %w", err)
+	}
+
+	refresh, err := r.jwtManager.GenRefresh(login)
+	if err != nil {
+		return entity.Tokens{}, fmt.Errorf("LoginOTP.GenRefresh: %w", err)
+	}
+
+	hashRefresh, err := r.jwtHashing.Encrypt(refresh)
+	if err != nil {
+		return entity.Tokens{}, fmt.Errorf("LoginOTP.Encrypt(refresh): %w", err)
+	}
+
+	hashAccess, err := r.jwtHashing.Encrypt(access)
+	if err != nil {
+		return entity.Tokens{}, fmt.Errorf("LoginOTP.Encrypt(access): %w", err)
+	}
+
+	if err = r.usersRepo.SetRefreshHash(ctx, entity.SetRefreshHashParams{
+		RefreshHash: &hashRefresh,
+		UserAgent:   &userAgent,
+		Login:       &login,
+	}); err != nil {
+		return entity.Tokens{}, fmt.Errorf("LoginOTP.SetRefreshHash: %w", err)
+	}
+
+	if err = r.usersRepo.UpdateLastSighUp(ctx, &login); err != nil {
+		fmt.Println("!!! INTO LOG. UpdateLastSighUp:", err)
+	}
+
+	return entity.Tokens{
+		AccessToken:  &hashAccess,
+		RefreshToken: &hashRefresh,
+	}, nil
 }

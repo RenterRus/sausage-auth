@@ -8,4 +8,5 @@ var (
 	ErrCodeInvalid     = errors.New("code invalid")
 	ErrTokenInvalid    = errors.New("token invalid")
 	ErrTokenExpired    = errors.New("token expired")
+	ErrTokenBlocked    = errors.New("token blocked")
 )

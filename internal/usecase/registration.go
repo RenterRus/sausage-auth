@@ -34,7 +34,7 @@ func (r *profile) Registration(ctx context.Context, login string) (string, error
 }
 
 func (r *profile) Confirmed(ctx context.Context, login, code string) error {
-	hash, err := r.usersRepo.Hash(ctx, &login)
+	hash, err := r.usersRepo.OtpHash(ctx, &login)
 	if err != nil {
 		return fmt.Errorf("Confirmed.Hash: %w", err)
 	}

@@ -7,5 +7,5 @@ update users set confirmed = true where user_login = sqlc.narg('login');
 -- name: IsExist :one
 select exists(select 1 from users WHERE user_login = sqlc.narg('login'));
 
--- name: Hash :one
+-- name: OtpHash :one
 select otp_hash from users where user_login = sqlc.narg('login');

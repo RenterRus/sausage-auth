@@ -9,7 +9,7 @@ import (
 type UsersRepo interface {
 	// register
 	Confirmed(ctx context.Context, login *string) error
-	Hash(ctx context.Context, login *string) (string, error)
+	OtpHash(ctx context.Context, login *string) (string, error)
 	IsExist(ctx context.Context, login *string) (bool, error)
 	Register(ctx context.Context, arg entity.RegisterParams) error
 

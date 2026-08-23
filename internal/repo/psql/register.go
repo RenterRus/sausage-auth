@@ -22,12 +22,12 @@ func (u *UserRepo) Confirmed(ctx context.Context, login *string) error {
 }
 
 // Hash implements db.Querier.
-func (u *UserRepo) Hash(ctx context.Context, login *string) (string, error) {
+func (u *UserRepo) OtpHash(ctx context.Context, login *string) (string, error) {
 	if login == nil || *login == "" {
 		return "", fmt.Errorf("Hash: %w", entity.ErrParametrNoFound)
 	}
 
-	hash, err := u.Queries.Hash(ctx, login)
+	hash, err := u.Queries.OtpHash(ctx, login)
 	if err != nil {
 		return "", fmt.Errorf("Hash.Hash: %w", err)
 	}
