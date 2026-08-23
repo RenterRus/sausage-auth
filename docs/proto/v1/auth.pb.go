@@ -205,6 +205,220 @@ func (x *AcceptResponse) GetStatus() string {
 	return ""
 }
 
+type RevokeSessionRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Mode:
+	//
+	//	*RevokeSessionRequest_Current_
+	//	*RevokeSessionRequest_All_
+	Mode          isRevokeSessionRequest_Mode `protobuf_oneof:"mode"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeSessionRequest) Reset() {
+	*x = RevokeSessionRequest{}
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeSessionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeSessionRequest) ProtoMessage() {}
+
+func (x *RevokeSessionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeSessionRequest.ProtoReflect.Descriptor instead.
+func (*RevokeSessionRequest) Descriptor() ([]byte, []int) {
+	return file_docs_proto_v1_auth_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *RevokeSessionRequest) GetMode() isRevokeSessionRequest_Mode {
+	if x != nil {
+		return x.Mode
+	}
+	return nil
+}
+
+func (x *RevokeSessionRequest) GetCurrent() *RevokeSessionRequest_Current {
+	if x != nil {
+		if x, ok := x.Mode.(*RevokeSessionRequest_Current_); ok {
+			return x.Current
+		}
+	}
+	return nil
+}
+
+func (x *RevokeSessionRequest) GetAll() *RevokeSessionRequest_All {
+	if x != nil {
+		if x, ok := x.Mode.(*RevokeSessionRequest_All_); ok {
+			return x.All
+		}
+	}
+	return nil
+}
+
+type isRevokeSessionRequest_Mode interface {
+	isRevokeSessionRequest_Mode()
+}
+
+type RevokeSessionRequest_Current_ struct {
+	Current *RevokeSessionRequest_Current `protobuf:"bytes,1,opt,name=current,proto3,oneof"`
+}
+
+type RevokeSessionRequest_All_ struct {
+	All *RevokeSessionRequest_All `protobuf:"bytes,2,opt,name=all,proto3,oneof"`
+}
+
+func (*RevokeSessionRequest_Current_) isRevokeSessionRequest_Mode() {}
+
+func (*RevokeSessionRequest_All_) isRevokeSessionRequest_Mode() {}
+
+type RevokeSessionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeSessionResponse) Reset() {
+	*x = RevokeSessionResponse{}
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeSessionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeSessionResponse) ProtoMessage() {}
+
+func (x *RevokeSessionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeSessionResponse.ProtoReflect.Descriptor instead.
+func (*RevokeSessionResponse) Descriptor() ([]byte, []int) {
+	return file_docs_proto_v1_auth_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *RevokeSessionResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+type RevokeSessionRequest_Current struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Hash          string                 `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeSessionRequest_Current) Reset() {
+	*x = RevokeSessionRequest_Current{}
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeSessionRequest_Current) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeSessionRequest_Current) ProtoMessage() {}
+
+func (x *RevokeSessionRequest_Current) ProtoReflect() protoreflect.Message {
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeSessionRequest_Current.ProtoReflect.Descriptor instead.
+func (*RevokeSessionRequest_Current) Descriptor() ([]byte, []int) {
+	return file_docs_proto_v1_auth_proto_rawDescGZIP(), []int{4, 0}
+}
+
+func (x *RevokeSessionRequest_Current) GetHash() string {
+	if x != nil {
+		return x.Hash
+	}
+	return ""
+}
+
+type RevokeSessionRequest_All struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Login         string                 `protobuf:"bytes,1,opt,name=login,proto3" json:"login,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeSessionRequest_All) Reset() {
+	*x = RevokeSessionRequest_All{}
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeSessionRequest_All) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeSessionRequest_All) ProtoMessage() {}
+
+func (x *RevokeSessionRequest_All) ProtoReflect() protoreflect.Message {
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeSessionRequest_All.ProtoReflect.Descriptor instead.
+func (*RevokeSessionRequest_All) Descriptor() ([]byte, []int) {
+	return file_docs_proto_v1_auth_proto_rawDescGZIP(), []int{4, 1}
+}
+
+func (x *RevokeSessionRequest_All) GetLogin() string {
+	if x != nil {
+		return x.Login
+	}
+	return ""
+}
+
 var File_docs_proto_v1_auth_proto protoreflect.FileDescriptor
 
 const file_docs_proto_v1_auth_proto_rawDesc = "" +
@@ -218,10 +432,21 @@ const file_docs_proto_v1_auth_proto_rawDesc = "" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x19\n" +
 	"\botp_code\x18\x02 \x01(\tR\aotpCode\"(\n" +
 	"\x0eAcceptResponse\x12\x16\n" +
-	"\x06status\x18\x01 \x01(\tR\x06status2\x8a\x01\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\"\xd4\x01\n" +
+	"\x14RevokeSessionRequest\x12A\n" +
+	"\acurrent\x18\x01 \x01(\v2%.auth.v1.RevokeSessionRequest.CurrentH\x00R\acurrent\x125\n" +
+	"\x03all\x18\x02 \x01(\v2!.auth.v1.RevokeSessionRequest.AllH\x00R\x03all\x1a\x1d\n" +
+	"\aCurrent\x12\x12\n" +
+	"\x04hash\x18\x01 \x01(\tR\x04hash\x1a\x1b\n" +
+	"\x03All\x12\x14\n" +
+	"\x05login\x18\x01 \x01(\tR\x05loginB\x06\n" +
+	"\x04mode\"/\n" +
+	"\x15RevokeSessionResponse\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status2\xda\x01\n" +
 	"\vAuthService\x12?\n" +
 	"\bRegister\x12\x18.auth.v1.RegisterRequest\x1a\x19.auth.v1.RegisterResponse\x12:\n" +
-	"\aConfirm\x12\x16.auth.v1.AcceptRequest\x1a\x17.auth.v1.AcceptResponseB=Z;github.com/RenterRus/sausage-profile/auth/pb/auth/v1;authpbb\x06proto3"
+	"\aConfirm\x12\x16.auth.v1.AcceptRequest\x1a\x17.auth.v1.AcceptResponse\x12N\n" +
+	"\rRevokeSession\x12\x1d.auth.v1.RevokeSessionRequest\x1a\x1e.auth.v1.RevokeSessionResponseB=Z;github.com/RenterRus/sausage-profile/auth/pb/auth/v1;authpbb\x06proto3"
 
 var (
 	file_docs_proto_v1_auth_proto_rawDescOnce sync.Once
@@ -235,23 +460,31 @@ func file_docs_proto_v1_auth_proto_rawDescGZIP() []byte {
 	return file_docs_proto_v1_auth_proto_rawDescData
 }
 
-var file_docs_proto_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_docs_proto_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_docs_proto_v1_auth_proto_goTypes = []any{
-	(*RegisterRequest)(nil),  // 0: auth.v1.RegisterRequest
-	(*RegisterResponse)(nil), // 1: auth.v1.RegisterResponse
-	(*AcceptRequest)(nil),    // 2: auth.v1.AcceptRequest
-	(*AcceptResponse)(nil),   // 3: auth.v1.AcceptResponse
+	(*RegisterRequest)(nil),              // 0: auth.v1.RegisterRequest
+	(*RegisterResponse)(nil),             // 1: auth.v1.RegisterResponse
+	(*AcceptRequest)(nil),                // 2: auth.v1.AcceptRequest
+	(*AcceptResponse)(nil),               // 3: auth.v1.AcceptResponse
+	(*RevokeSessionRequest)(nil),         // 4: auth.v1.RevokeSessionRequest
+	(*RevokeSessionResponse)(nil),        // 5: auth.v1.RevokeSessionResponse
+	(*RevokeSessionRequest_Current)(nil), // 6: auth.v1.RevokeSessionRequest.Current
+	(*RevokeSessionRequest_All)(nil),     // 7: auth.v1.RevokeSessionRequest.All
 }
 var file_docs_proto_v1_auth_proto_depIdxs = []int32{
-	0, // 0: auth.v1.AuthService.Register:input_type -> auth.v1.RegisterRequest
-	2, // 1: auth.v1.AuthService.Confirm:input_type -> auth.v1.AcceptRequest
-	1, // 2: auth.v1.AuthService.Register:output_type -> auth.v1.RegisterResponse
-	3, // 3: auth.v1.AuthService.Confirm:output_type -> auth.v1.AcceptResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	6, // 0: auth.v1.RevokeSessionRequest.current:type_name -> auth.v1.RevokeSessionRequest.Current
+	7, // 1: auth.v1.RevokeSessionRequest.all:type_name -> auth.v1.RevokeSessionRequest.All
+	0, // 2: auth.v1.AuthService.Register:input_type -> auth.v1.RegisterRequest
+	2, // 3: auth.v1.AuthService.Confirm:input_type -> auth.v1.AcceptRequest
+	4, // 4: auth.v1.AuthService.RevokeSession:input_type -> auth.v1.RevokeSessionRequest
+	1, // 5: auth.v1.AuthService.Register:output_type -> auth.v1.RegisterResponse
+	3, // 6: auth.v1.AuthService.Confirm:output_type -> auth.v1.AcceptResponse
+	5, // 7: auth.v1.AuthService.RevokeSession:output_type -> auth.v1.RevokeSessionResponse
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_docs_proto_v1_auth_proto_init() }
@@ -259,13 +492,17 @@ func file_docs_proto_v1_auth_proto_init() {
 	if File_docs_proto_v1_auth_proto != nil {
 		return
 	}
+	file_docs_proto_v1_auth_proto_msgTypes[4].OneofWrappers = []any{
+		(*RevokeSessionRequest_Current_)(nil),
+		(*RevokeSessionRequest_All_)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_docs_proto_v1_auth_proto_rawDesc), len(file_docs_proto_v1_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

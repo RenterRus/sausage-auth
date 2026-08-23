@@ -6,12 +6,13 @@ import (
 )
 
 type Manager struct {
+	profile usecase.Register
+
 	proto.UnimplementedAuthServiceServer
-	register usecase.Register
 }
 
 func NewManager(register usecase.Register) proto.AuthServiceServer {
 	return &Manager{
-		register: register,
+		profile: register,
 	}
 }

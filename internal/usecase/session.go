@@ -7,26 +7,22 @@ import (
 	"github.com/RenterRus/sausage-profile/internal/entity"
 )
 
-func (r *profile) Logout(ctx context.Context, login, hash *string, revokeType RevokeType) error {
+func (r *profile) Logout(ctx context.Context, sign *string, revokeType RevokeType) error {
+	if sign == nil || *sign == "" {
+		return fmt.Errorf("Logout: %w", entity.ErrParametrNoFound)
+	}
+
 	switch revokeType {
 	case REVOKE_ONE:
-		if hash == nil || *hash == "" {
-			return fmt.Errorf("Logout(one): %w", entity.ErrParametrNoFound)
-		}
-
-		if err := r.usersRepo.SetBlockRefresh(ctx, hash); err != nil {
+		if err := r.usersRepo.SetBlockRefresh(ctx, sign); err != nil {
 			return fmt.Errorf("Logout.SetBlockRefresh(one): %w", err)
 		}
 
-		if err := r.usersRepo.RemoveRefreshByHash(ctx, hash); err != nil {
+		if err := r.usersRepo.RemoveRefreshByHash(ctx, sign); err != nil {
 			return fmt.Errorf("Logout.RemoveRefreshByHash(one): %w", err)
 		}
 	case REVOKE_ALL:
-		if login == nil || *login == "" {
-			return fmt.Errorf("Logout(all): %w", entity.ErrParametrNoFound)
-		}
-
-		toBlock, err := r.usersRepo.RemoveRefreshByLogin(ctx, login)
+		toBlock, err := r.usersRepo.RemoveRefreshByLogin(ctx, sign)
 		if err != nil {
 			return fmt.Errorf("Logout.RemoveRefreshByHash(all): %w", err)
 		}

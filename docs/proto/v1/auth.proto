@@ -21,6 +21,25 @@ message AcceptResponse{
   string status = 1;
 }
 
+message RevokeSessionRequest{
+  message Current{
+    string hash = 1;
+  }
+
+  message All{
+      string login = 1;
+  }
+
+  oneof mode{
+    Current current = 1;
+    All all = 2;
+  }
+
+}
+
+message RevokeSessionResponse{
+  string status = 1;
+}
 
 service AuthService {
 
@@ -29,13 +48,11 @@ service AuthService {
     
     rpc Confirm(AcceptRequest) returns (AcceptResponse);
 
-  // Switch to otp
-
+    rpc RevokeSession(RevokeSessionRequest) returns (RevokeSessionResponse);
+  
   // Auth
 
   // RefreshToken
-
-  // RevokeSession
 
   // ValidateToken
   

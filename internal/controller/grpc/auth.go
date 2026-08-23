@@ -2,39 +2,37 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/AlekSi/pointer"
 	proto "github.com/RenterRus/sausage-profile/docs/proto/v1"
 	"github.com/RenterRus/sausage-profile/internal/entity"
+	"github.com/RenterRus/sausage-profile/internal/usecase"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-func (t *Manager) Register(ctx context.Context, req *proto.RegisterRequest) (*proto.RegisterResponse, error) {
-	if req == nil || req.Login == "" {
-		return nil, fmt.Errorf("Register: %w", entity.ErrParametrNoFound)
+// RevokeSession implements authpb.AuthServiceServer.
+func (m *Manager) RevokeSession(ctx context.Context, req *proto.RevokeSessionRequest) (*proto.RevokeSessionResponse, error) {
+	if req == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "RevokeSession: %w", entity.ErrParametrNoFound)
 	}
 
-	url, err := t.register.Registration(ctx, req.GetLogin())
-	if err != nil {
-		return nil, fmt.Errorf("Registration: %w", err)
+	switch req.Mode.(type) {
+	case *proto.RevokeSessionRequest_Current_:
+		if err := m.profile.Logout(ctx, pointer.To(req.GetCurrent().GetHash()), usecase.REVOKE_ONE); err != nil {
+			return &proto.RevokeSessionResponse{
+				Status: entity.STATUS_FAILED,
+			}, status.Errorf(codes.Internal, "RevokeSession.Current: %w", err)
+		}
+	case *proto.RevokeSessionRequest_All_:
+		if err := m.profile.Logout(ctx, pointer.To(req.GetAll().GetLogin()), usecase.REVOKE_ALL); err != nil {
+			return &proto.RevokeSessionResponse{
+				Status: entity.STATUS_FAILED,
+			}, status.Errorf(codes.Internal, "RevokeSession.All: %w", err)
+		}
 	}
 
-	return &proto.RegisterResponse{
-		Url: url,
-	}, nil
-}
-
-func (t *Manager) Confirm(ctx context.Context, req *proto.AcceptRequest) (*proto.AcceptResponse, error) {
-	if req == nil || req.Login == "" || req.OtpCode == "" {
-		return nil, fmt.Errorf("Confirm: %w", entity.ErrParametrNoFound)
-	}
-
-	if err := t.register.Confirmed(ctx, req.GetLogin(), req.GetOtpCode()); err != nil {
-		return &proto.AcceptResponse{
-			Status: entity.STATUS_FAILED,
-		}, fmt.Errorf("Confirm.Confirmed: %w", err)
-	}
-
-	return &proto.AcceptResponse{
+	return &proto.RevokeSessionResponse{
 		Status: entity.STATUS_OK,
 	}, nil
 }

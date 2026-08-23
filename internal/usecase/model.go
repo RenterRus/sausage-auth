@@ -20,7 +20,7 @@ type Register interface {
 	LoginOTP(ctx context.Context, login, userAgent, code string) (entity.Tokens, error)
 	Refresh(ctx context.Context, login, userAgent, refreshToken string) (entity.Tokens, error)
 
-	Logout(ctx context.Context, login, hash *string, revokeType RevokeType) error
+	Logout(ctx context.Context, sign *string, revokeType RevokeType) error
 
 	// func(ctx, access) userID
 	Validation(ctx context.Context, access string) (*string, error)
