@@ -3,8 +3,8 @@ servers:
 - engine: postgresql
   uri: "postgres://locahost:5432/postgres?sslmode=disable"
 sql:
-- schema: "internal/repo/migrations/"
-  queries: "internal/repo/migrations/queries/"
+- schema: "docs/migrations/"
+  queries: "docs/migrations/queries/"
   engine: "postgresql"
   gen:
     go:
