@@ -9,7 +9,8 @@ import (
 )
 
 type BlacklistRefresh struct {
-	RefreshHash string `db:"refresh_hash"`
+	RefreshHash string           `db:"refresh_hash"`
+	CreatedAt   pgtype.Timestamp `db:"created_at"`
 }
 
 type Refreshlist struct {

@@ -65,12 +65,12 @@ func (a *App) Run() error {
 			return fmt.Errorf("Run.NewDBManager: %w", err)
 		}
 
-		v1.RegisterAuthServiceServer(s, protoServe.NewManager(usecase.NewRegisterManager(
-			otp.NewOTPManager(hashing.NewHashingManager([]byte(a.conf.OTPHashSecretKey)[:secretSize]), a.conf.Issuer),
-			hashing.NewHashingManager([]byte(a.conf.JWTHashSecretKey)[:secretSize]),
-			jwt.NewJWTManager([]byte(a.conf.JWTSecretKey)[:secretSize]),
-			users,
-		)))
+		v1.RegisterAuthServiceServer(s, protoServe.NewManager(usecase.NewProfileManager(usecase.ProfileConf{
+			OtpRepo:    otp.NewOTPManager(hashing.NewHashingManager([]byte(a.conf.OTPHashSecretKey)[:secretSize]), a.conf.Issuer),
+			Hash:       hashing.NewHashingManager([]byte(a.conf.JWTHashSecretKey)[:secretSize]),
+			JwtManager: jwt.NewJWTManager([]byte(a.conf.JWTSecretKey)[:secretSize]),
+			UsersRepo:  users,
+		})))
 
 		log.Printf("gRPC server listening on %s", fmt.Sprintf("%s:%d", a.conf.GRPC.Host, a.conf.GRPC.Port))
 

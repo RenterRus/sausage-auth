@@ -5,3 +5,8 @@ type BaseJWT struct {
 	IsExpired bool
 	IsValid   bool
 }
+
+type DeleteOldRefreshParams struct {
+	UserLogin *string
+	UserAgent *string
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/AlekSi/pointer"
 	"github.com/RenterRus/sausage-profile/internal/entity"
 	"github.com/RenterRus/sausage-profile/internal/repo/psql/db"
 )
@@ -78,13 +79,42 @@ func (u *UserRepo) RemoveRefreshByHash(ctx context.Context, refreshHash *string)
 	return nil
 }
 
-func (u *UserRepo) RemoveRefreshByLogin(ctx context.Context, userLogin *string) error {
+func (u *UserRepo) RemoveRefreshByLogin(ctx context.Context, userLogin *string) ([]string, error) {
 	if userLogin == nil || *userLogin == "" {
-		return fmt.Errorf("RemoveRefreshByLogin: %w", entity.ErrParametrNoFound)
+		return nil, fmt.Errorf("RemoveRefreshByLogin: %w", entity.ErrParametrNoFound)
 	}
 
-	if err := u.Queries.RemoveRefreshByLogin(ctx, userLogin); err != nil {
-		return fmt.Errorf("RemoveRefreshByLogin.RemoveRefreshByLogin: %w", err)
+	refreshs, err := u.Queries.RemoveRefreshByLogin(ctx, userLogin)
+	if err != nil {
+		return nil, fmt.Errorf("RemoveRefreshByLogin.RemoveRefreshByLogin: %w", err)
+	}
+
+	return refreshs, nil
+}
+
+func (u *UserRepo) DeleteOldRefresh(ctx context.Context, arg entity.DeleteOldRefreshParams) ([]string, error) {
+	if pointer.Get(arg.UserAgent) == "" || pointer.Get(arg.UserLogin) == "" {
+		return nil, fmt.Errorf("DeleteOldRefresh(validation): %w", entity.ErrParametrNoFound)
+	}
+
+	hashs, err := u.Queries.DeleteOldRefresh(ctx, db.DeleteOldRefreshParams{
+		UserLogin: arg.UserLogin,
+		UserAgent: arg.UserAgent,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("DeleteOldRefresh: %w", err)
+	}
+
+	return hashs, nil
+}
+
+func (u *UserRepo) UpdateLastSighUp(ctx context.Context, userLogin *string) error {
+	if pointer.Get(userLogin) == "" {
+		return fmt.Errorf("UpdateLastSighUp(validation): %w", entity.ErrParametrNoFound)
+	}
+
+	if err := u.Queries.UpdateLastSighUp(ctx, userLogin); err != nil {
+		return fmt.Errorf("UpdateLastSighUp: %w", err)
 	}
 
 	return nil

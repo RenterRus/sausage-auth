@@ -12,8 +12,14 @@ insert into refreshlist(refresh_hash, user_login, user_agent) values(sqlc.narg('
 -- name: RemoveRefreshByHash :exec
 delete from refreshlist where refresh_hash = sqlc.narg('refresh_hash');
 
--- name: RemoveRefreshByLogin :exec
-delete from refreshlist where user_login = sqlc.narg('user_login');
+-- name: RemoveRefreshByLogin :many
+delete from refreshlist where user_login = sqlc.narg('user_login') returning refresh_hash;
 
 -- name: GetUUIDByLogin :one
 select uuid from users WHERE user_login = sqlc.narg('login');
+
+-- name: DeleteOldRefresh :many
+delete from refreshlist where user_login = sqlc.narg('user_login') and user_agent = sqlc.narg('user_agent') returning refresh_hash;
+
+-- name: UpdateLastSighUp :exec
+update users set last_sign_up_at = now() where user_login = sqlc.narg('user_login');

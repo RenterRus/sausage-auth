@@ -9,6 +9,38 @@ import (
 	"context"
 )
 
+const deleteOldRefresh = `-- name: DeleteOldRefresh :many
+delete from refreshlist where user_login = $1 and user_agent = $2 returning refresh_hash
+`
+
+type DeleteOldRefreshParams struct {
+	UserLogin *string `db:"user_login"`
+	UserAgent *string `db:"user_agent"`
+}
+
+// DeleteOldRefresh
+//
+//	delete from refreshlist where user_login = $1 and user_agent = $2 returning refresh_hash
+func (q *Queries) DeleteOldRefresh(ctx context.Context, arg DeleteOldRefreshParams) ([]string, error) {
+	rows, err := q.db.Query(ctx, deleteOldRefresh, arg.UserLogin, arg.UserAgent)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var refresh_hash string
+		if err := rows.Scan(&refresh_hash); err != nil {
+			return nil, err
+		}
+		items = append(items, refresh_hash)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getRefreshToken = `-- name: GetRefreshToken :one
 select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent,
 exists(select 1 from blacklist_refresh b where b.refresh_hash = r.refresh_hash) as block 
@@ -70,16 +102,31 @@ func (q *Queries) RemoveRefreshByHash(ctx context.Context, refreshHash *string) 
 	return err
 }
 
-const removeRefreshByLogin = `-- name: RemoveRefreshByLogin :exec
-delete from refreshlist where user_login = $1
+const removeRefreshByLogin = `-- name: RemoveRefreshByLogin :many
+delete from refreshlist where user_login = $1 returning refresh_hash
 `
 
 // RemoveRefreshByLogin
 //
-//	delete from refreshlist where user_login = $1
-func (q *Queries) RemoveRefreshByLogin(ctx context.Context, userLogin *string) error {
-	_, err := q.db.Exec(ctx, removeRefreshByLogin, userLogin)
-	return err
+//	delete from refreshlist where user_login = $1 returning refresh_hash
+func (q *Queries) RemoveRefreshByLogin(ctx context.Context, userLogin *string) ([]string, error) {
+	rows, err := q.db.Query(ctx, removeRefreshByLogin, userLogin)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var refresh_hash string
+		if err := rows.Scan(&refresh_hash); err != nil {
+			return nil, err
+		}
+		items = append(items, refresh_hash)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const setBlockRefresh = `-- name: SetBlockRefresh :exec
@@ -109,5 +156,17 @@ type SetRefreshHashParams struct {
 //	insert into refreshlist(refresh_hash, user_login, user_agent) values($1, $2, $3)
 func (q *Queries) SetRefreshHash(ctx context.Context, arg SetRefreshHashParams) error {
 	_, err := q.db.Exec(ctx, setRefreshHash, arg.RefreshHash, arg.UserLogin, arg.UserAgent)
+	return err
+}
+
+const updateLastSighUp = `-- name: UpdateLastSighUp :exec
+update users set last_sign_up_at = now() where user_login = $1
+`
+
+// UpdateLastSighUp
+//
+//	update users set last_sign_up_at = now() where user_login = $1
+func (q *Queries) UpdateLastSighUp(ctx context.Context, userLogin *string) error {
+	_, err := q.db.Exec(ctx, updateLastSighUp, userLogin)
 	return err
 }

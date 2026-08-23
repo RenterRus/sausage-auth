@@ -20,5 +20,9 @@ type UsersRepo interface {
 
 	GetUUIDByLogin(ctx context.Context, login *string) (string, error)
 	RemoveRefreshByHash(ctx context.Context, refreshHash *string) error
-	RemoveRefreshByLogin(ctx context.Context, userLogin *string) error
+	RemoveRefreshByLogin(ctx context.Context, userLogin *string) ([]string, error)
+
+	DeleteOldRefresh(ctx context.Context, arg entity.DeleteOldRefreshParams) ([]string, error)
+
+	UpdateLastSighUp(ctx context.Context, userLogin *string) error
 }

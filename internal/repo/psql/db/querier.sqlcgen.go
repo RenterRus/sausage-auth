@@ -13,6 +13,10 @@ type Querier interface {
 	//
 	//  update users set confirmed = true where user_login = $1
 	Confirmed(ctx context.Context, login *string) error
+	//DeleteOldRefresh
+	//
+	//  delete from refreshlist where user_login = $1 and user_agent = $2 returning refresh_hash
+	DeleteOldRefresh(ctx context.Context, arg DeleteOldRefreshParams) ([]string, error)
 	//GetRefreshToken
 	//
 	//  select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent,
@@ -41,8 +45,8 @@ type Querier interface {
 	RemoveRefreshByHash(ctx context.Context, refreshHash *string) error
 	//RemoveRefreshByLogin
 	//
-	//  delete from refreshlist where user_login = $1
-	RemoveRefreshByLogin(ctx context.Context, userLogin *string) error
+	//  delete from refreshlist where user_login = $1 returning refresh_hash
+	RemoveRefreshByLogin(ctx context.Context, userLogin *string) ([]string, error)
 	//SetBlockRefresh
 	//
 	//  insert into blacklist_refresh (refresh_hash) values ($1)
@@ -51,6 +55,10 @@ type Querier interface {
 	//
 	//  insert into refreshlist(refresh_hash, user_login, user_agent) values($1, $2, $3)
 	SetRefreshHash(ctx context.Context, arg SetRefreshHashParams) error
+	//UpdateLastSighUp
+	//
+	//  update users set last_sign_up_at = now() where user_login = $1
+	UpdateLastSighUp(ctx context.Context, userLogin *string) error
 }
 
 var _ Querier = (*Queries)(nil)
