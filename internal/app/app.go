@@ -66,10 +66,14 @@ func (a *App) Run() error {
 		}
 
 		v1.RegisterAuthServiceServer(s, protoServe.NewManager(usecase.NewProfileManager(usecase.ProfileConf{
-			OtpRepo:    otp.NewOTPManager(hashing.NewHashingManager([]byte(a.conf.OTPHashSecretKey)[:secretSize]), a.conf.Issuer),
-			Hash:       hashing.NewHashingManager([]byte(a.conf.JWTHashSecretKey)[:secretSize]),
-			JwtManager: jwt.NewJWTManager([]byte(a.conf.JWTSecretKey)[:secretSize]),
-			UsersRepo:  users,
+			OtpRepo: otp.NewOTPManager(hashing.NewHashingManager([]byte(a.conf.OTPHashSecretKey)[:secretSize]), a.conf.Issuer),
+			Hash:    hashing.NewHashingManager([]byte(a.conf.JWTHashSecretKey)[:secretSize]),
+			JwtManager: jwt.NewJWTManager(jwt.JwtManagerConf{
+				Key:        []byte(a.conf.JWTSecretKey)[:secretSize],
+				AccessExp:  a.conf.AccessExp,
+				RefreshExp: a.conf.RefreshExp,
+			}),
+			UsersRepo: users,
 		})))
 
 		log.Printf("gRPC server listening on %s", fmt.Sprintf("%s:%d", a.conf.GRPC.Host, a.conf.GRPC.Port))

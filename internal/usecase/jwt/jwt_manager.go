@@ -8,23 +8,28 @@ import (
 	gojwt "github.com/golang-jwt/jwt/v5"
 )
 
-const (
-	DEFAULT_ACCESS_EXP  = time.Minute * 15
-	DEFAULT_REFRESH_EXP = time.Hour * 11 * 24
-)
-
 type jwtManager struct {
-	key []byte
+	access_exp  time.Duration
+	refresh_exp time.Duration
+	key         []byte
 }
 
-func NewJWTManager(secretKey []byte) JWT {
+type JwtManagerConf struct {
+	AccessExp  time.Duration
+	RefreshExp time.Duration
+	Key        []byte
+}
+
+func NewJWTManager(req JwtManagerConf) JWT {
 	return &jwtManager{
-		key: secretKey,
+		access_exp:  req.AccessExp,
+		refresh_exp: req.RefreshExp,
+		key:         req.Key,
 	}
 }
 
 func (j *jwtManager) GenAccess(user_login string) (string, error) {
-	token, err := j.generateToken(user_login, time.Now().Add(DEFAULT_ACCESS_EXP))
+	token, err := j.generateToken(user_login, time.Now().Add(j.access_exp))
 	if err != nil {
 		return "", fmt.Errorf("GenAccess.generateToken: %w", err)
 	}
@@ -33,7 +38,7 @@ func (j *jwtManager) GenAccess(user_login string) (string, error) {
 }
 
 func (j *jwtManager) GenRefresh(user_login string) (string, error) {
-	token, err := j.generateToken(user_login, time.Now().Add(DEFAULT_REFRESH_EXP))
+	token, err := j.generateToken(user_login, time.Now().Add(j.refresh_exp))
 	if err != nil {
 		return "", fmt.Errorf("GenRefresh.generateToken: %w", err)
 	}

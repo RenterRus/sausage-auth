@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"github.com/RenterRus/sausage-profile/internal/repo/inmem"
 	"github.com/RenterRus/sausage-profile/internal/repo/psql"
 	"github.com/RenterRus/sausage-profile/internal/usecase/hashing"
 	"github.com/RenterRus/sausage-profile/internal/usecase/jwt"
@@ -12,6 +13,8 @@ type profile struct {
 	jwtHashing hashing.Hashing
 	usersRepo  psql.UsersRepo
 	jwtManager jwt.JWT
+
+	accCache inmem.AccessCache
 }
 
 type ProfileConf struct {
@@ -19,6 +22,8 @@ type ProfileConf struct {
 	Hash       hashing.Hashing
 	JwtManager jwt.JWT
 	UsersRepo  psql.UsersRepo
+
+	AccCache inmem.AccessCache
 }
 
 func NewProfileManager(conf ProfileConf) Register {
@@ -27,5 +32,6 @@ func NewProfileManager(conf ProfileConf) Register {
 		jwtHashing: conf.Hash,
 		usersRepo:  conf.UsersRepo,
 		jwtManager: conf.JwtManager,
+		accCache:   conf.AccCache,
 	}
 }

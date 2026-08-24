@@ -4,6 +4,7 @@ go 1.25.0
 
 require (
 	github.com/AlekSi/pointer v1.2.0
+	github.com/bradfitz/gomemcache v0.0.0-20260422231931-4d751bb6e37c
 	github.com/go-playground/validator/v10 v10.30.3
 	github.com/jackc/pgx/v5 v5.10.0
 	github.com/labstack/gommon v0.5.0

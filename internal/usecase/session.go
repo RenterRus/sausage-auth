@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/RenterRus/sausage-profile/internal/entity"
+	"github.com/RenterRus/sausage-profile/internal/repo/inmem"
 )
 
 func (r *profile) Logout(ctx context.Context, sign *string, revokeType RevokeType) error {
@@ -57,10 +58,20 @@ func (r *profile) Validation(ctx context.Context, accessHash string) (*string, e
 		return nil, fmt.Errorf("Validation.Parse(IsExpired): %w", entity.ErrTokenExpired)
 	}
 
-	uuid, err := r.usersRepo.GetUUIDByLogin(ctx, &jwtDetail.UserLogin)
+	uuid, isValid, err := r.accCache.Get(ctx, accessHash)
+	if err == nil && isValid {
+		return &uuid, nil
+	}
+
+	uuid, err = r.usersRepo.GetUUIDByLogin(ctx, &jwtDetail.UserLogin)
 	if err != nil {
 		return nil, fmt.Errorf("Validation.GetUUIDByLogin: %w", err)
 	}
+
+	r.accCache.Set(ctx, inmem.AccessCacheRequest{
+		Access:   accessHash,
+		UserUUID: uuid,
+	})
 
 	return &uuid, nil
 }
@@ -126,6 +137,14 @@ func (r *profile) LoginOTP(ctx context.Context, req LoginRequest) (entity.Tokens
 
 	if err = r.usersRepo.UpdateLastSighUp(ctx, &req.Login); err != nil {
 		fmt.Println("!!! INTO LOG. UpdateLastSighUp:", err)
+	}
+
+	uuid, err := r.usersRepo.GetUUIDByLogin(ctx, &req.Login)
+	if err == nil {
+		r.accCache.Set(ctx, inmem.AccessCacheRequest{
+			Access:   hashAccess,
+			UserUUID: uuid,
+		})
 	}
 
 	return entity.Tokens{
@@ -194,6 +213,14 @@ func (r *profile) Refresh(ctx context.Context, req RefreshRequest) (entity.Token
 
 	if err = r.usersRepo.UpdateLastSighUp(ctx, &req.Login); err != nil {
 		fmt.Println("!!! INTO LOG. UpdateLastSighUp:", err)
+	}
+
+	uuid, err := r.usersRepo.GetUUIDByLogin(ctx, &req.Login)
+	if err == nil {
+		r.accCache.Set(ctx, inmem.AccessCacheRequest{
+			Access:   hashAccess,
+			UserUUID: uuid,
+		})
 	}
 
 	return entity.Tokens{

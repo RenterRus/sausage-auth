@@ -16,3 +16,11 @@ issuer: "sausage"
 OTPHashSecretKey: "32 byte key"
 JWTHashSecretKey: "32 byte key"
 JWTSecretKey: "32 byte key"
+
+AccessExp: 15m
+RefreshExp: 246h
+
+Memcache:
+    host: "127.0.0.1"
+    port: 8889
+    enable: true

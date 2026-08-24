@@ -14,7 +14,7 @@ import (
 // RevokeSession implements authpb.AuthServiceServer.
 func (m *Manager) RevokeSession(ctx context.Context, req *proto.RevokeSessionRequest) (*proto.RevokeSessionResponse, error) {
 	if req == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "RevokeSession: %w", entity.ErrParametrNoFound)
+		return nil, status.Errorf(codes.InvalidArgument, "RevokeSession: %s", entity.ErrParametrNoFound.Error())
 	}
 
 	switch req.Mode.(type) {
@@ -22,13 +22,13 @@ func (m *Manager) RevokeSession(ctx context.Context, req *proto.RevokeSessionReq
 		if err := m.profile.Logout(ctx, pointer.To(req.GetCurrent().GetHash()), usecase.REVOKE_ONE); err != nil {
 			return &proto.RevokeSessionResponse{
 				Status: entity.STATUS_FAILED,
-			}, status.Errorf(codes.Internal, "RevokeSession.Current: %w", err)
+			}, status.Errorf(codes.Internal, "RevokeSession.Current: %s", err.Error())
 		}
 	case *proto.RevokeSessionRequest_All_:
 		if err := m.profile.Logout(ctx, pointer.To(req.GetAll().GetLogin()), usecase.REVOKE_ALL); err != nil {
 			return &proto.RevokeSessionResponse{
 				Status: entity.STATUS_FAILED,
-			}, status.Errorf(codes.Internal, "RevokeSession.All: %w", err)
+			}, status.Errorf(codes.Internal, "RevokeSession.All: %s", err.Error())
 		}
 	}
 
@@ -39,12 +39,12 @@ func (m *Manager) RevokeSession(ctx context.Context, req *proto.RevokeSessionReq
 
 func (m *Manager) ValidateToken(ctx context.Context, req *proto.ValidateTokenRequest) (*proto.ValidateTokenResponse, error) {
 	if req == nil || req.GetAccess() == "" {
-		return nil, status.Errorf(codes.InvalidArgument, "ValidateToken: %w", entity.ErrParametrNoFound)
+		return nil, status.Errorf(codes.InvalidArgument, "ValidateToken: %s", entity.ErrParametrNoFound.Error())
 	}
 
 	uuid, err := m.profile.Validation(ctx, req.GetAccess())
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "ValidateToken.Validation: %w", err)
+		return nil, status.Errorf(codes.Internal, "ValidateToken.Validation: %s", err.Error())
 	}
 
 	return &proto.ValidateTokenResponse{
@@ -54,7 +54,7 @@ func (m *Manager) ValidateToken(ctx context.Context, req *proto.ValidateTokenReq
 
 func (m *Manager) LoginOTP(ctx context.Context, req *proto.LoginOTPRequest) (*proto.LoginOTPResponse, error) {
 	if req == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "LoginOTP: %w", entity.ErrParametrNoFound)
+		return nil, status.Errorf(codes.InvalidArgument, "LoginOTP: %s", entity.ErrParametrNoFound.Error())
 	}
 
 	tokens, err := m.profile.LoginOTP(ctx, usecase.LoginRequest{
@@ -63,7 +63,7 @@ func (m *Manager) LoginOTP(ctx context.Context, req *proto.LoginOTPRequest) (*pr
 		Code:      req.GetCode(),
 	})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "LoginOTP.LoginOTP: %w", err)
+		return nil, status.Errorf(codes.Internal, "LoginOTP.LoginOTP: %s", err.Error())
 	}
 
 	return &proto.LoginOTPResponse{
@@ -76,7 +76,7 @@ func (m *Manager) LoginOTP(ctx context.Context, req *proto.LoginOTPRequest) (*pr
 
 func (m *Manager) RefreshToken(ctx context.Context, req *proto.RefreshRequest) (*proto.RefreshResponse, error) {
 	if req == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "LoginOTP: %w", entity.ErrParametrNoFound)
+		return nil, status.Errorf(codes.InvalidArgument, "LoginOTP: %s", entity.ErrParametrNoFound.Error())
 	}
 
 	tokens, err := m.profile.Refresh(ctx, usecase.RefreshRequest{
@@ -85,7 +85,7 @@ func (m *Manager) RefreshToken(ctx context.Context, req *proto.RefreshRequest) (
 		RefreshToken: req.GetRefreshToken(),
 	})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "LoginOTP.LoginOTP: %w", err)
+		return nil, status.Errorf(codes.Internal, "LoginOTP.LoginOTP: %s", err.Error())
 	}
 
 	return &proto.RefreshResponse{

@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"time"
 
 	validator "github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
@@ -34,6 +35,11 @@ type Config struct {
 	JWTSecretKey     string `validate:"required,gte=32"`
 
 	Issuer string `validate:"required"`
+
+	AccessExp  time.Duration `validate:"required"`
+	RefreshExp time.Duration `validate:"required"`
+
+	Memcache Server `validate:"required"`
 }
 
 func ReadConfig(path string, fileName string) (*Config, error) {
