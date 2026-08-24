@@ -2,6 +2,8 @@ package inmem
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -26,10 +28,12 @@ func NewAccessCache(conf AccessCacheConf) AccessCache {
 }
 
 func (a *accessCache) Set(ctx context.Context, req AccessCacheRequest) error {
+	hash := sha256.Sum256([]byte(req.Access))
+
 	if err := a.client.Add(&memcache.Item{
-		Key:        req.Access,
+		Key:        hex.EncodeToString(hash[:]),
 		Value:      []byte(req.UserUUID),
-		Expiration: int32(a.accessExp),
+		Expiration: int32(time.Now().Add(a.accessExp).Unix()),
 	}); err != nil {
 		return fmt.Errorf("Cahce.Set: %w", err)
 	}
@@ -38,7 +42,9 @@ func (a *accessCache) Set(ctx context.Context, req AccessCacheRequest) error {
 }
 
 func (a *accessCache) Get(ctx context.Context, access string) (string, bool, error) {
-	acc, err := a.client.Get(access)
+	hash := sha256.Sum256([]byte(access))
+
+	acc, err := a.client.Get(hex.EncodeToString(hash[:]))
 	if err != nil {
 		return "", false, fmt.Errorf("Cache.Get: %w", err)
 	}
