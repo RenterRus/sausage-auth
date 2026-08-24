@@ -7,11 +7,13 @@ import (
 
 	v1 "github.com/RenterRus/sausage-profile/docs/proto/v1"
 	protoServe "github.com/RenterRus/sausage-profile/internal/controller/grpc"
+	"github.com/RenterRus/sausage-profile/internal/repo/inmem"
 	"github.com/RenterRus/sausage-profile/internal/repo/psql"
 	"github.com/RenterRus/sausage-profile/internal/usecase"
 	"github.com/RenterRus/sausage-profile/internal/usecase/hashing"
 	"github.com/RenterRus/sausage-profile/internal/usecase/jwt"
 	"github.com/RenterRus/sausage-profile/internal/usecase/otp"
+	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/sourcegraph/conc/pool"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -74,6 +76,10 @@ func (a *App) Run() error {
 				RefreshExp: a.conf.RefreshExp,
 			}),
 			UsersRepo: users,
+			AccCache: inmem.NewAccessCache(inmem.AccessCacheConf{
+				AccessExp: a.conf.AccessExp,
+				Client:    memcache.New(fmt.Sprintf("%s:%d", a.conf.Memcache.Host, a.conf.Memcache.Port)),
+			}),
 		})))
 
 		log.Printf("gRPC server listening on %s", fmt.Sprintf("%s:%d", a.conf.GRPC.Host, a.conf.GRPC.Port))
