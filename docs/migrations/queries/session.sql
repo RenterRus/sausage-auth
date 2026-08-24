@@ -1,7 +1,7 @@
 -- name: GetRefreshToken :one
 select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent,
 exists(select 1 from blacklist_refresh b where b.refresh_hash = r.refresh_hash) as block 
-from refreshlist r where r.user_login = sqlc.narg('user_login') and r.refresh_hash = sqlc.narg('hash');
+from refreshlist r where r.user_login = sqlc.narg('user_login') and r.refresh_hash = sqlc.narg('hash') and r.user_agent = sqlc.narg('user_agent');
 
 -- name: SetBlockRefresh :exec
 insert into blacklist_refresh (refresh_hash) values (sqlc.narg('refresh_hash'));

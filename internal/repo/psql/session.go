@@ -9,14 +9,15 @@ import (
 	"github.com/RenterRus/sausage-profile/internal/repo/psql/db"
 )
 
-func (u *UserRepo) GetRefreshToken(ctx context.Context, login, hash *string) (entity.GetRefreshTokenRow, error) {
-	if login == nil || *login == "" {
+func (u *UserRepo) GetRefreshToken(ctx context.Context, req GetRefreshReq) (entity.GetRefreshTokenRow, error) {
+	if req.Login == nil || *req.Login == "" {
 		return entity.GetRefreshTokenRow{}, fmt.Errorf("GetRefreshToken: %w", entity.ErrParametrNoFound)
 	}
 
 	resp, err := u.Queries.GetRefreshToken(ctx, db.GetRefreshTokenParams{
-		UserLogin: login,
-		Hash:      hash,
+		UserLogin: req.Login,
+		Hash:      req.Hash,
+		UserAgent: req.UserAgent,
 	})
 	if err != nil {
 		return entity.GetRefreshTokenRow{}, fmt.Errorf("GetRefreshToken.GetRefreshToken: %w", err)

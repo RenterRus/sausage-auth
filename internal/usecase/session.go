@@ -6,6 +6,7 @@ import (
 
 	"github.com/RenterRus/sausage-profile/internal/entity"
 	"github.com/RenterRus/sausage-profile/internal/repo/inmem"
+	"github.com/RenterRus/sausage-profile/internal/repo/psql"
 )
 
 func (r *profile) Logout(ctx context.Context, sign *string, revokeType RevokeType) error {
@@ -154,7 +155,11 @@ func (r *profile) LoginOTP(ctx context.Context, req LoginRequest) (entity.Tokens
 }
 
 func (r *profile) Refresh(ctx context.Context, req RefreshRequest) (entity.Tokens, error) {
-	oldRef, err := r.usersRepo.GetRefreshToken(ctx, &req.Login, &req.RefreshToken)
+	oldRef, err := r.usersRepo.GetRefreshToken(ctx, psql.GetRefreshReq{
+		Login:     &req.Login,
+		Hash:      &req.RefreshToken,
+		UserAgent: &req.UserAgent,
+	})
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("Refresh.GetRefreshToken: %w", err)
 	}

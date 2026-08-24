@@ -44,12 +44,13 @@ func (q *Queries) DeleteOldRefresh(ctx context.Context, arg DeleteOldRefreshPara
 const getRefreshToken = `-- name: GetRefreshToken :one
 select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent,
 exists(select 1 from blacklist_refresh b where b.refresh_hash = r.refresh_hash) as block 
-from refreshlist r where r.user_login = $1 and r.refresh_hash = $2
+from refreshlist r where r.user_login = $1 and r.refresh_hash = $2 and r.user_agent = $3
 `
 
 type GetRefreshTokenParams struct {
 	UserLogin *string `db:"user_login"`
 	Hash      *string `db:"hash"`
+	UserAgent *string `db:"user_agent"`
 }
 
 type GetRefreshTokenRow struct {
@@ -63,9 +64,9 @@ type GetRefreshTokenRow struct {
 //
 //	select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent,
 //	exists(select 1 from blacklist_refresh b where b.refresh_hash = r.refresh_hash) as block
-//	from refreshlist r where r.user_login = $1 and r.refresh_hash = $2
+//	from refreshlist r where r.user_login = $1 and r.refresh_hash = $2 and r.user_agent = $3
 func (q *Queries) GetRefreshToken(ctx context.Context, arg GetRefreshTokenParams) (GetRefreshTokenRow, error) {
-	row := q.db.QueryRow(ctx, getRefreshToken, arg.UserLogin, arg.Hash)
+	row := q.db.QueryRow(ctx, getRefreshToken, arg.UserLogin, arg.Hash, arg.UserAgent)
 	var i GetRefreshTokenRow
 	err := row.Scan(
 		&i.RefreshHash,

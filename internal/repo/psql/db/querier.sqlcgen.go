@@ -21,7 +21,7 @@ type Querier interface {
 	//
 	//  select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent,
 	//  exists(select 1 from blacklist_refresh b where b.refresh_hash = r.refresh_hash) as block
-	//  from refreshlist r where r.user_login = $1 and r.refresh_hash = $2
+	//  from refreshlist r where r.user_login = $1 and r.refresh_hash = $2 and r.user_agent = $3
 	GetRefreshToken(ctx context.Context, arg GetRefreshTokenParams) (GetRefreshTokenRow, error)
 	//GetUUIDByLogin
 	//
