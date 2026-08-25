@@ -3,7 +3,7 @@ package otp
 import (
 	"fmt"
 
-	"github.com/RenterRus/sausage-profile/internal/usecase/hashing"
+	"github.com/RenterRus/sausage-auth/internal/usecase/hashing"
 	"github.com/pquerna/otp/totp"
 )
 

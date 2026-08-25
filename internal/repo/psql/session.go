@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/AlekSi/pointer"
-	"github.com/RenterRus/sausage-profile/internal/entity"
-	"github.com/RenterRus/sausage-profile/internal/repo/psql/db"
+	"github.com/RenterRus/sausage-auth/internal/entity"
+	"github.com/RenterRus/sausage-auth/internal/repo/psql/db"
 )
 
 func (u *UserRepo) GetRefreshToken(ctx context.Context, req GetRefreshReq) (entity.GetRefreshTokenRow, error) {

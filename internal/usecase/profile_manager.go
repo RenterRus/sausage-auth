@@ -1,11 +1,11 @@
 package usecase
 
 import (
-	"github.com/RenterRus/sausage-profile/internal/repo/inmem"
-	"github.com/RenterRus/sausage-profile/internal/repo/psql"
-	"github.com/RenterRus/sausage-profile/internal/usecase/hashing"
-	"github.com/RenterRus/sausage-profile/internal/usecase/jwt"
-	"github.com/RenterRus/sausage-profile/internal/usecase/otp"
+	"github.com/RenterRus/sausage-auth/internal/repo/inmem"
+	"github.com/RenterRus/sausage-auth/internal/repo/psql"
+	"github.com/RenterRus/sausage-auth/internal/usecase/hashing"
+	"github.com/RenterRus/sausage-auth/internal/usecase/jwt"
+	"github.com/RenterRus/sausage-auth/internal/usecase/otp"
 )
 
 type profile struct {

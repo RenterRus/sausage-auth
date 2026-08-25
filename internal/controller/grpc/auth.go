@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/AlekSi/pointer"
-	proto "github.com/RenterRus/sausage-profile/docs/proto/v1"
-	"github.com/RenterRus/sausage-profile/internal/entity"
-	"github.com/RenterRus/sausage-profile/internal/usecase"
+	proto "github.com/RenterRus/sausage-auth/docs/proto/v1"
+	"github.com/RenterRus/sausage-auth/internal/entity"
+	"github.com/RenterRus/sausage-auth/internal/usecase"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

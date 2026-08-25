@@ -1,8 +1,8 @@
 package grpc
 
 import (
-	proto "github.com/RenterRus/sausage-profile/docs/proto/v1"
-	"github.com/RenterRus/sausage-profile/internal/usecase"
+	proto "github.com/RenterRus/sausage-auth/docs/proto/v1"
+	"github.com/RenterRus/sausage-auth/internal/usecase"
 )
 
 type Manager struct {

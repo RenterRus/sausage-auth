@@ -3,8 +3,8 @@ package grpc
 import (
 	"context"
 
-	proto "github.com/RenterRus/sausage-profile/docs/proto/v1"
-	"github.com/RenterRus/sausage-profile/internal/entity"
+	proto "github.com/RenterRus/sausage-auth/docs/proto/v1"
+	"github.com/RenterRus/sausage-auth/internal/entity"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

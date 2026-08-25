@@ -1,7 +1,7 @@
 syntax = "proto3";
 package auth.v1;
 
-option go_package = "github.com/RenterRus/sausage-profile/auth/pb/auth/v1;authpb";
+option go_package = "github.com/RenterRus/sausage-auth/auth/pb/auth/v1;authpb";
 
 
 message RegisterRequest {

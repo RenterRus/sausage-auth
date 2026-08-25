@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/RenterRus/sausage-profile/internal/entity"
-	"github.com/RenterRus/sausage-profile/internal/repo/inmem"
-	"github.com/RenterRus/sausage-profile/internal/repo/psql"
+	"github.com/RenterRus/sausage-auth/internal/entity"
+	"github.com/RenterRus/sausage-auth/internal/repo/inmem"
+	"github.com/RenterRus/sausage-auth/internal/repo/psql"
 )
 
 func (r *profile) Logout(ctx context.Context, sign *string, revokeType RevokeType) error {

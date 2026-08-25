@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/RenterRus/sausage-profile/internal/app"
+	"github.com/RenterRus/sausage-auth/internal/app"
 	"github.com/labstack/gommon/log"
 )
 

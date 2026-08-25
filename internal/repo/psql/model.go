@@ -3,7 +3,7 @@ package psql
 import (
 	"context"
 
-	"github.com/RenterRus/sausage-profile/internal/entity"
+	"github.com/RenterRus/sausage-auth/internal/entity"
 )
 
 type GetRefreshReq struct {

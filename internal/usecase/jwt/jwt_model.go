@@ -1,6 +1,6 @@
 package jwt
 
-import "github.com/RenterRus/sausage-profile/internal/entity"
+import "github.com/RenterRus/sausage-auth/internal/entity"
 
 type JWT interface {
 	GenAccess(user_login string) (string, error)

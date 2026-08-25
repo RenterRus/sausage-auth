@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/RenterRus/sausage-profile/internal/repo/psql/db"
+	"github.com/RenterRus/sausage-auth/internal/repo/psql/db"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

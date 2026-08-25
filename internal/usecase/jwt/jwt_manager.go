@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/RenterRus/sausage-profile/internal/entity"
+	"github.com/RenterRus/sausage-auth/internal/entity"
 	gojwt "github.com/golang-jwt/jwt/v5"
 )
 

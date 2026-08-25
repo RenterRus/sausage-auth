@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/RenterRus/sausage-profile/internal/entity"
-	"github.com/RenterRus/sausage-profile/internal/repo/psql/db"
+	"github.com/RenterRus/sausage-auth/internal/entity"
+	"github.com/RenterRus/sausage-auth/internal/repo/psql/db"
 )
 
 // Confirmed implements db.Querier.

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/RenterRus/sausage-profile/internal/entity"
+	"github.com/RenterRus/sausage-auth/internal/entity"
 )
 
 func (r *profile) Registration(ctx context.Context, login string) (string, error) {
