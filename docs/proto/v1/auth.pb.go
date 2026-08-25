@@ -7,12 +7,11 @@
 package authpb
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -817,7 +816,7 @@ const file_docs_proto_v1_auth_proto_rawDesc = "" +
 	"\rRevokeSession\x12\x1d.auth.v1.RevokeSessionRequest\x1a\x1e.auth.v1.RevokeSessionResponse\x12N\n" +
 	"\rValidateToken\x12\x1d.auth.v1.ValidateTokenRequest\x1a\x1e.auth.v1.ValidateTokenResponse\x12?\n" +
 	"\bLoginOTP\x12\x18.auth.v1.LoginOTPRequest\x1a\x19.auth.v1.LoginOTPResponse\x12A\n" +
-	"\fRefreshToken\x12\x17.auth.v1.RefreshRequest\x1a\x18.auth.v1.RefreshResponseB=Z;github.com/RenterRus/sausage-auth/auth/pb/auth/v1;authpbb\x06proto3"
+	"\fRefreshToken\x12\x17.auth.v1.RefreshRequest\x1a\x18.auth.v1.RefreshResponseB:Z8github.com/RenterRus/sausage-auth/auth/pb/auth/v1;authpbb\x06proto3"
 
 var (
 	file_docs_proto_v1_auth_proto_rawDescOnce sync.Once

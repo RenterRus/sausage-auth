@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/RenterRus/sausage-auth/internal/app"
 	"github.com/labstack/gommon/log"
@@ -23,8 +26,19 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	go func() {
+		if err := app.Run(); err != nil {
+			log.Error(err)
+		}
+	}()
 
-	if err := app.Run(); err != nil {
-		log.Error(err)
-	}
+	done, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	<-done.Done()
+
+	fmt.Printf("\nGracefull")
+	app.Close()
+	fmt.Println(" complete")
+
 }
