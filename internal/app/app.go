@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -14,12 +15,13 @@ import (
 	"github.com/RenterRus/sausage-auth/internal/usecase/jwt"
 	"github.com/RenterRus/sausage-auth/internal/usecase/otp"
 	"github.com/bradfitz/gomemcache/memcache"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sourcegraph/conc/pool"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-const secretSize = 32
+const SECRET_SIZE = 32
 
 type App struct {
 	conf *Config
@@ -60,25 +62,33 @@ func (a *App) Run() error {
 			s.Stop()
 		}()
 
-		users, err := psql.NewDBManager(fmt.Sprintf("%s://%s:%s@%s:%d/%s",
+		pgx, err := pgxpool.New(context.Background(), fmt.Sprintf("%s://%s:%s@%s:%d/%s",
 			a.conf.PSQL.Provider, a.conf.PSQL.Username, a.conf.PSQL.Password,
 			a.conf.PSQL.Host, a.conf.PSQL.Port, a.conf.PSQL.DBName))
 		if err != nil {
 			return fmt.Errorf("Run.NewDBManager: %w", err)
 		}
+		defer func() {
+			pgx.Close()
+		}()
+
+		cacheClient := memcache.New(fmt.Sprintf("%s:%d", a.conf.Memcache.Host, a.conf.Memcache.Port))
+		defer func() {
+			cacheClient.Close()
+		}()
 
 		v1.RegisterAuthServiceServer(s, protoServe.NewManager(usecase.NewProfileManager(usecase.ProfileConf{
-			OtpRepo: otp.NewOTPManager(hashing.NewHashingManager([]byte(a.conf.OTPHashSecretKey)[:secretSize]), a.conf.Issuer),
-			Hash:    hashing.NewHashingManager([]byte(a.conf.JWTHashSecretKey)[:secretSize]),
+			OtpRepo: otp.NewOTPManager(hashing.NewHashingManager([]byte(a.conf.OTPHashSecretKey)[:SECRET_SIZE]), a.conf.Issuer),
+			Hash:    hashing.NewHashingManager([]byte(a.conf.JWTHashSecretKey)[:SECRET_SIZE]),
 			JwtManager: jwt.NewJWTManager(jwt.JwtManagerConf{
-				Key:        []byte(a.conf.JWTSecretKey)[:secretSize],
+				Key:        []byte(a.conf.JWTSecretKey)[:SECRET_SIZE],
 				AccessExp:  a.conf.AccessExp,
 				RefreshExp: a.conf.RefreshExp,
 			}),
-			UsersRepo: users,
+			UsersRepo: psql.NewDBManager(pgx),
 			AccCache: inmem.NewAccessCache(inmem.AccessCacheConf{
 				AccessExp: a.conf.AccessExp,
-				Client:    memcache.New(fmt.Sprintf("%s:%d", a.conf.Memcache.Host, a.conf.Memcache.Port)),
+				Client:    cacheClient,
 			}),
 		})))
 
