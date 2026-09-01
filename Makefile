@@ -21,7 +21,7 @@ create migration:
 	@go run github.com/pressly/goose/v3/cmd/goose@latest create refreshlist sql -dir internal/repo/migrations
 
 
-MIGRATIONS_DIR ?= ./internal/repo/migrations
+MIGRATIONS_DIR ?= ./docs/migrations
 DB_DRIVER ?= postgres
 
 CONN_STR = $(DB_CONNECTION_STR)
