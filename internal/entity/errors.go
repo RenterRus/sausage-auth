@@ -9,4 +9,5 @@ var (
 	ErrTokenInvalid    = errors.New("token invalid")
 	ErrTokenExpired    = errors.New("token expired")
 	ErrTokenBlocked    = errors.New("token blocked")
+	ErrAuthFailed      = errors.New("auth failed")
 )

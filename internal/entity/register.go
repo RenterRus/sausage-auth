@@ -3,7 +3,6 @@ package entity
 type RegisterParams struct {
 	Login *string
 	Hash  *string
-	Link  *string
 }
 
 type GetRefreshTokenRow struct {

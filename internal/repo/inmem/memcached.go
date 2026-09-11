@@ -28,11 +28,11 @@ func NewAccessCache(conf AccessCacheConf) AccessCache {
 }
 
 func (a *accessCache) Set(ctx context.Context, req AccessCacheRequest) error {
-	hash := sha256.Sum256([]byte(req.Access))
+	hash := sha256.Sum256([]byte(req.Key))
 
 	if err := a.client.Add(&memcache.Item{
 		Key:        hex.EncodeToString(hash[:]),
-		Value:      []byte(req.UserUUID),
+		Value:      []byte(req.Value),
 		Expiration: int32(time.Now().Add(a.accessExp).Unix()),
 	}); err != nil {
 		return fmt.Errorf("Cahce.Set: %w", err)

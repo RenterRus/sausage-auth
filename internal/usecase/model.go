@@ -36,4 +36,6 @@ type Register interface {
 
 	// func(ctx, access) userID
 	Validation(ctx context.Context, access string) (*string, error)
+
+	UrlOTP(ctx context.Context, accessHash string) (string, error)
 }

@@ -679,6 +679,94 @@ func (x *RefreshResponse) GetTokens() *Tokens {
 	return nil
 }
 
+type UrlOTPRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Access        string                 `protobuf:"bytes,1,opt,name=access,proto3" json:"access,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UrlOTPRequest) Reset() {
+	*x = UrlOTPRequest{}
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UrlOTPRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UrlOTPRequest) ProtoMessage() {}
+
+func (x *UrlOTPRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UrlOTPRequest.ProtoReflect.Descriptor instead.
+func (*UrlOTPRequest) Descriptor() ([]byte, []int) {
+	return file_docs_proto_v1_auth_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *UrlOTPRequest) GetAccess() string {
+	if x != nil {
+		return x.Access
+	}
+	return ""
+}
+
+type UrlOTPResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UrlOTPResponse) Reset() {
+	*x = UrlOTPResponse{}
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UrlOTPResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UrlOTPResponse) ProtoMessage() {}
+
+func (x *UrlOTPResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UrlOTPResponse.ProtoReflect.Descriptor instead.
+func (*UrlOTPResponse) Descriptor() ([]byte, []int) {
+	return file_docs_proto_v1_auth_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *UrlOTPResponse) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
 type RevokeSessionRequest_Current struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Hash          string                 `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
@@ -688,7 +776,7 @@ type RevokeSessionRequest_Current struct {
 
 func (x *RevokeSessionRequest_Current) Reset() {
 	*x = RevokeSessionRequest_Current{}
-	mi := &file_docs_proto_v1_auth_proto_msgTypes[13]
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -700,7 +788,7 @@ func (x *RevokeSessionRequest_Current) String() string {
 func (*RevokeSessionRequest_Current) ProtoMessage() {}
 
 func (x *RevokeSessionRequest_Current) ProtoReflect() protoreflect.Message {
-	mi := &file_docs_proto_v1_auth_proto_msgTypes[13]
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -732,7 +820,7 @@ type RevokeSessionRequest_All struct {
 
 func (x *RevokeSessionRequest_All) Reset() {
 	*x = RevokeSessionRequest_All{}
-	mi := &file_docs_proto_v1_auth_proto_msgTypes[14]
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -744,7 +832,7 @@ func (x *RevokeSessionRequest_All) String() string {
 func (*RevokeSessionRequest_All) ProtoMessage() {}
 
 func (x *RevokeSessionRequest_All) ProtoReflect() protoreflect.Message {
-	mi := &file_docs_proto_v1_auth_proto_msgTypes[14]
+	mi := &file_docs_proto_v1_auth_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -809,13 +897,18 @@ const file_docs_proto_v1_auth_proto_rawDesc = "" +
 	"\tuserAgent\x18\x02 \x01(\tR\tuserAgent\x12\"\n" +
 	"\frefreshToken\x18\x03 \x01(\tR\frefreshToken\":\n" +
 	"\x0fRefreshResponse\x12'\n" +
-	"\x06tokens\x18\x01 \x01(\v2\x0f.auth.v1.TokensR\x06tokens2\xae\x03\n" +
+	"\x06tokens\x18\x01 \x01(\v2\x0f.auth.v1.TokensR\x06tokens\"'\n" +
+	"\rUrlOTPRequest\x12\x16\n" +
+	"\x06access\x18\x01 \x01(\tR\x06access\"\"\n" +
+	"\x0eUrlOTPResponse\x12\x10\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url2\xe9\x03\n" +
 	"\vAuthService\x12?\n" +
 	"\bRegister\x12\x18.auth.v1.RegisterRequest\x1a\x19.auth.v1.RegisterResponse\x12:\n" +
 	"\aConfirm\x12\x16.auth.v1.AcceptRequest\x1a\x17.auth.v1.AcceptResponse\x12N\n" +
 	"\rRevokeSession\x12\x1d.auth.v1.RevokeSessionRequest\x1a\x1e.auth.v1.RevokeSessionResponse\x12N\n" +
 	"\rValidateToken\x12\x1d.auth.v1.ValidateTokenRequest\x1a\x1e.auth.v1.ValidateTokenResponse\x12?\n" +
-	"\bLoginOTP\x12\x18.auth.v1.LoginOTPRequest\x1a\x19.auth.v1.LoginOTPResponse\x12A\n" +
+	"\bLoginOTP\x12\x18.auth.v1.LoginOTPRequest\x1a\x19.auth.v1.LoginOTPResponse\x129\n" +
+	"\x06UrlOTP\x12\x16.auth.v1.UrlOTPRequest\x1a\x17.auth.v1.UrlOTPResponse\x12A\n" +
 	"\fRefreshToken\x12\x17.auth.v1.RefreshRequest\x1a\x18.auth.v1.RefreshResponseB:Z8github.com/RenterRus/sausage-auth/auth/pb/auth/v1;authpbb\x06proto3"
 
 var (
@@ -830,7 +923,7 @@ func file_docs_proto_v1_auth_proto_rawDescGZIP() []byte {
 	return file_docs_proto_v1_auth_proto_rawDescData
 }
 
-var file_docs_proto_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_docs_proto_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_docs_proto_v1_auth_proto_goTypes = []any{
 	(*RegisterRequest)(nil),              // 0: auth.v1.RegisterRequest
 	(*RegisterResponse)(nil),             // 1: auth.v1.RegisterResponse
@@ -845,12 +938,14 @@ var file_docs_proto_v1_auth_proto_goTypes = []any{
 	(*LoginOTPResponse)(nil),             // 10: auth.v1.LoginOTPResponse
 	(*RefreshRequest)(nil),               // 11: auth.v1.RefreshRequest
 	(*RefreshResponse)(nil),              // 12: auth.v1.RefreshResponse
-	(*RevokeSessionRequest_Current)(nil), // 13: auth.v1.RevokeSessionRequest.Current
-	(*RevokeSessionRequest_All)(nil),     // 14: auth.v1.RevokeSessionRequest.All
+	(*UrlOTPRequest)(nil),                // 13: auth.v1.UrlOTPRequest
+	(*UrlOTPResponse)(nil),               // 14: auth.v1.UrlOTPResponse
+	(*RevokeSessionRequest_Current)(nil), // 15: auth.v1.RevokeSessionRequest.Current
+	(*RevokeSessionRequest_All)(nil),     // 16: auth.v1.RevokeSessionRequest.All
 }
 var file_docs_proto_v1_auth_proto_depIdxs = []int32{
-	13, // 0: auth.v1.RevokeSessionRequest.current:type_name -> auth.v1.RevokeSessionRequest.Current
-	14, // 1: auth.v1.RevokeSessionRequest.all:type_name -> auth.v1.RevokeSessionRequest.All
+	15, // 0: auth.v1.RevokeSessionRequest.current:type_name -> auth.v1.RevokeSessionRequest.Current
+	16, // 1: auth.v1.RevokeSessionRequest.all:type_name -> auth.v1.RevokeSessionRequest.All
 	8,  // 2: auth.v1.LoginOTPResponse.tokens:type_name -> auth.v1.Tokens
 	8,  // 3: auth.v1.RefreshResponse.tokens:type_name -> auth.v1.Tokens
 	0,  // 4: auth.v1.AuthService.Register:input_type -> auth.v1.RegisterRequest
@@ -858,15 +953,17 @@ var file_docs_proto_v1_auth_proto_depIdxs = []int32{
 	4,  // 6: auth.v1.AuthService.RevokeSession:input_type -> auth.v1.RevokeSessionRequest
 	6,  // 7: auth.v1.AuthService.ValidateToken:input_type -> auth.v1.ValidateTokenRequest
 	9,  // 8: auth.v1.AuthService.LoginOTP:input_type -> auth.v1.LoginOTPRequest
-	11, // 9: auth.v1.AuthService.RefreshToken:input_type -> auth.v1.RefreshRequest
-	1,  // 10: auth.v1.AuthService.Register:output_type -> auth.v1.RegisterResponse
-	3,  // 11: auth.v1.AuthService.Confirm:output_type -> auth.v1.AcceptResponse
-	5,  // 12: auth.v1.AuthService.RevokeSession:output_type -> auth.v1.RevokeSessionResponse
-	7,  // 13: auth.v1.AuthService.ValidateToken:output_type -> auth.v1.ValidateTokenResponse
-	10, // 14: auth.v1.AuthService.LoginOTP:output_type -> auth.v1.LoginOTPResponse
-	12, // 15: auth.v1.AuthService.RefreshToken:output_type -> auth.v1.RefreshResponse
-	10, // [10:16] is the sub-list for method output_type
-	4,  // [4:10] is the sub-list for method input_type
+	13, // 9: auth.v1.AuthService.UrlOTP:input_type -> auth.v1.UrlOTPRequest
+	11, // 10: auth.v1.AuthService.RefreshToken:input_type -> auth.v1.RefreshRequest
+	1,  // 11: auth.v1.AuthService.Register:output_type -> auth.v1.RegisterResponse
+	3,  // 12: auth.v1.AuthService.Confirm:output_type -> auth.v1.AcceptResponse
+	5,  // 13: auth.v1.AuthService.RevokeSession:output_type -> auth.v1.RevokeSessionResponse
+	7,  // 14: auth.v1.AuthService.ValidateToken:output_type -> auth.v1.ValidateTokenResponse
+	10, // 15: auth.v1.AuthService.LoginOTP:output_type -> auth.v1.LoginOTPResponse
+	14, // 16: auth.v1.AuthService.UrlOTP:output_type -> auth.v1.UrlOTPResponse
+	12, // 17: auth.v1.AuthService.RefreshToken:output_type -> auth.v1.RefreshResponse
+	11, // [11:18] is the sub-list for method output_type
+	4,  // [4:11] is the sub-list for method input_type
 	4,  // [4:4] is the sub-list for extension type_name
 	4,  // [4:4] is the sub-list for extension extendee
 	0,  // [0:4] is the sub-list for field type_name
@@ -887,7 +984,7 @@ func file_docs_proto_v1_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_docs_proto_v1_auth_proto_rawDesc), len(file_docs_proto_v1_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

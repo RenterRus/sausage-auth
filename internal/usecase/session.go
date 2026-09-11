@@ -70,8 +70,8 @@ func (r *profile) Validation(ctx context.Context, accessHash string) (*string, e
 	}
 
 	r.accCache.Set(ctx, inmem.AccessCacheRequest{
-		Access:   accessHash,
-		UserUUID: uuid,
+		Key:   accessHash,
+		Value: uuid,
 	})
 
 	return &uuid, nil
@@ -143,8 +143,8 @@ func (r *profile) LoginOTP(ctx context.Context, req LoginRequest) (entity.Tokens
 	uuid, err := r.usersRepo.GetUUIDByLogin(ctx, &req.Login)
 	if err == nil {
 		r.accCache.Set(ctx, inmem.AccessCacheRequest{
-			Access:   hashAccess,
-			UserUUID: uuid,
+			Key:   hashAccess,
+			Value: uuid,
 		})
 	}
 
@@ -223,8 +223,8 @@ func (r *profile) Refresh(ctx context.Context, req RefreshRequest) (entity.Token
 	uuid, err := r.usersRepo.GetUUIDByLogin(ctx, &req.Login)
 	if err == nil {
 		r.accCache.Set(ctx, inmem.AccessCacheRequest{
-			Access:   hashAccess,
-			UserUUID: uuid,
+			Key:   hashAccess,
+			Value: uuid,
 		})
 	}
 

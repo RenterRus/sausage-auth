@@ -35,6 +35,20 @@ func (q *Queries) IsExist(ctx context.Context, login *string) (bool, error) {
 	return exists, err
 }
 
+const loginByUUID = `-- name: LoginByUUID :one
+select user_login from users where uuid = $1
+`
+
+// LoginByUUID
+//
+//	select user_login from users where uuid = $1
+func (q *Queries) LoginByUUID(ctx context.Context, uuid *string) (string, error) {
+	row := q.db.QueryRow(ctx, loginByUUID, uuid)
+	var user_login string
+	err := row.Scan(&user_login)
+	return user_login, err
+}
+
 const otpHash = `-- name: OtpHash :one
 select otp_hash from users where user_login = $1
 `
@@ -50,19 +64,18 @@ func (q *Queries) OtpHash(ctx context.Context, login *string) (string, error) {
 }
 
 const register = `-- name: Register :exec
-insert into users (user_login, uuid, otp_hash, otp_link, created_at, last_sign_up_at) values ($1, gen_random_uuid(), $2, $3, now(), now())
+insert into users (user_login, uuid, otp_hash, created_at, last_sign_up_at) values ($1, gen_random_uuid(), $2, now(), now())
 `
 
 type RegisterParams struct {
 	Login *string `db:"login"`
 	Hash  *string `db:"hash"`
-	Link  *string `db:"link"`
 }
 
 // Register
 //
-//	insert into users (user_login, uuid, otp_hash, otp_link, created_at, last_sign_up_at) values ($1, gen_random_uuid(), $2, $3, now(), now())
+//	insert into users (user_login, uuid, otp_hash, created_at, last_sign_up_at) values ($1, gen_random_uuid(), $2, now(), now())
 func (q *Queries) Register(ctx context.Context, arg RegisterParams) error {
-	_, err := q.db.Exec(ctx, register, arg.Login, arg.Hash, arg.Link)
+	_, err := q.db.Exec(ctx, register, arg.Login, arg.Hash)
 	return err
 }

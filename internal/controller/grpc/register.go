@@ -39,3 +39,18 @@ func (t *Manager) Confirm(ctx context.Context, req *proto.AcceptRequest) (*proto
 		Status: entity.STATUS_OK,
 	}, nil
 }
+
+func (t *Manager) UrlOTP(ctx context.Context, req *proto.UrlOTPRequest) (*proto.UrlOTPResponse, error) {
+	if req == nil || req.Access == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "UrlOTP: %s", entity.ErrParametrNoFound.Error())
+	}
+
+	url, err := t.profile.UrlOTP(ctx, req.GetAccess())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "UrlOTP.UrlOTP: %s", err.Error())
+	}
+
+	return &proto.UrlOTPResponse{
+		Url: url,
+	}, nil
+}

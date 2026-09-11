@@ -24,6 +24,7 @@ const (
 	AuthService_RevokeSession_FullMethodName = "/auth.v1.AuthService/RevokeSession"
 	AuthService_ValidateToken_FullMethodName = "/auth.v1.AuthService/ValidateToken"
 	AuthService_LoginOTP_FullMethodName      = "/auth.v1.AuthService/LoginOTP"
+	AuthService_UrlOTP_FullMethodName        = "/auth.v1.AuthService/UrlOTP"
 	AuthService_RefreshToken_FullMethodName  = "/auth.v1.AuthService/RefreshToken"
 )
 
@@ -36,6 +37,7 @@ type AuthServiceClient interface {
 	RevokeSession(ctx context.Context, in *RevokeSessionRequest, opts ...grpc.CallOption) (*RevokeSessionResponse, error)
 	ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error)
 	LoginOTP(ctx context.Context, in *LoginOTPRequest, opts ...grpc.CallOption) (*LoginOTPResponse, error)
+	UrlOTP(ctx context.Context, in *UrlOTPRequest, opts ...grpc.CallOption) (*UrlOTPResponse, error)
 	RefreshToken(ctx context.Context, in *RefreshRequest, opts ...grpc.CallOption) (*RefreshResponse, error)
 }
 
@@ -97,6 +99,16 @@ func (c *authServiceClient) LoginOTP(ctx context.Context, in *LoginOTPRequest, o
 	return out, nil
 }
 
+func (c *authServiceClient) UrlOTP(ctx context.Context, in *UrlOTPRequest, opts ...grpc.CallOption) (*UrlOTPResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UrlOTPResponse)
+	err := c.cc.Invoke(ctx, AuthService_UrlOTP_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authServiceClient) RefreshToken(ctx context.Context, in *RefreshRequest, opts ...grpc.CallOption) (*RefreshResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RefreshResponse)
@@ -116,6 +128,7 @@ type AuthServiceServer interface {
 	RevokeSession(context.Context, *RevokeSessionRequest) (*RevokeSessionResponse, error)
 	ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error)
 	LoginOTP(context.Context, *LoginOTPRequest) (*LoginOTPResponse, error)
+	UrlOTP(context.Context, *UrlOTPRequest) (*UrlOTPResponse, error)
 	RefreshToken(context.Context, *RefreshRequest) (*RefreshResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
@@ -141,6 +154,9 @@ func (UnimplementedAuthServiceServer) ValidateToken(context.Context, *ValidateTo
 }
 func (UnimplementedAuthServiceServer) LoginOTP(context.Context, *LoginOTPRequest) (*LoginOTPResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginOTP not implemented")
+}
+func (UnimplementedAuthServiceServer) UrlOTP(context.Context, *UrlOTPRequest) (*UrlOTPResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UrlOTP not implemented")
 }
 func (UnimplementedAuthServiceServer) RefreshToken(context.Context, *RefreshRequest) (*RefreshResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
@@ -256,6 +272,24 @@ func _AuthService_LoginOTP_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_UrlOTP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UrlOTPRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).UrlOTP(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_UrlOTP_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).UrlOTP(ctx, req.(*UrlOTPRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AuthService_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RefreshRequest)
 	if err := dec(in); err != nil {
@@ -300,6 +334,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LoginOTP",
 			Handler:    _AuthService_LoginOTP_Handler,
+		},
+		{
+			MethodName: "UrlOTP",
+			Handler:    _AuthService_UrlOTP_Handler,
 		},
 		{
 			MethodName: "RefreshToken",

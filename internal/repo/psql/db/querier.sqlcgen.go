@@ -31,13 +31,17 @@ type Querier interface {
 	//
 	//  select exists(select 1 from users WHERE user_login = $1)
 	IsExist(ctx context.Context, login *string) (bool, error)
+	//LoginByUUID
+	//
+	//  select user_login from users where uuid = $1
+	LoginByUUID(ctx context.Context, uuid *string) (string, error)
 	//OtpHash
 	//
 	//  select otp_hash from users where user_login = $1
 	OtpHash(ctx context.Context, login *string) (string, error)
 	//Register
 	//
-	//  insert into users (user_login, uuid, otp_hash, otp_link, created_at, last_sign_up_at) values ($1, gen_random_uuid(), $2, $3, now(), now())
+	//  insert into users (user_login, uuid, otp_hash, created_at, last_sign_up_at) values ($1, gen_random_uuid(), $2, now(), now())
 	Register(ctx context.Context, arg RegisterParams) error
 	//RemoveRefreshByHash
 	//

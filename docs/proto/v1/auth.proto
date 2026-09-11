@@ -75,6 +75,17 @@ message RefreshResponse{
 }
 
 
+message UrlOTPRequest{
+  string access = 1;
+}
+
+message UrlOTPResponse{
+  string url = 1;
+}
+
+
+
+
 service AuthService {
 
   
@@ -87,6 +98,7 @@ service AuthService {
     rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
 
     rpc LoginOTP(LoginOTPRequest) returns (LoginOTPResponse);
+    rpc UrlOTP(UrlOTPRequest) returns (UrlOTPResponse);
 
     rpc RefreshToken(RefreshRequest) returns (RefreshResponse);
 }

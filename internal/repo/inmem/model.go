@@ -5,8 +5,8 @@ import (
 )
 
 type AccessCacheRequest struct {
-	Access   string
-	UserUUID string
+	Key   string
+	Value string
 }
 
 type AccessCache interface {

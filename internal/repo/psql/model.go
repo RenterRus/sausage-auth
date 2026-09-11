@@ -24,6 +24,7 @@ type UsersRepo interface {
 	SetRefreshHash(ctx context.Context, arg entity.SetRefreshHashParams) error
 
 	GetUUIDByLogin(ctx context.Context, login *string) (string, error)
+	LoginByUUID(ctx context.Context, uuid *string) (string, error)
 	RemoveRefreshByHash(ctx context.Context, refreshHash *string) error
 	RemoveRefreshByLogin(ctx context.Context, userLogin *string) ([]string, error)
 

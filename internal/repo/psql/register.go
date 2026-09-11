@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/AlekSi/pointer"
 	"github.com/RenterRus/sausage-auth/internal/entity"
 	"github.com/RenterRus/sausage-auth/internal/repo/psql/db"
 )
@@ -59,18 +60,26 @@ func (u *UserRepo) Register(ctx context.Context, arg entity.RegisterParams) erro
 		return fmt.Errorf("Register(hash): %w", entity.ErrParametrNoFound)
 	}
 
-	if arg.Link == nil || *arg.Link == "" {
-		return fmt.Errorf("Register(link): %w", entity.ErrParametrNoFound)
-	}
-
 	err := u.Queries.Register(ctx, db.RegisterParams{
 		Login: arg.Login,
 		Hash:  arg.Hash,
-		Link:  arg.Link,
 	})
 	if err != nil {
 		return fmt.Errorf("Register.Register: %w", err)
 	}
 
 	return nil
+}
+
+func (u *UserRepo) LoginByUUID(ctx context.Context, uuid *string) (string, error) {
+	if pointer.Get(uuid) == "" {
+		return "", fmt.Errorf("LoginByUUID: %w", entity.ErrParametrNoFound)
+	}
+
+	login, err := u.LoginByUUID(ctx, uuid)
+	if err != nil {
+		return "", fmt.Errorf("LoginByUUID.LoginByUUID: %w", err)
+	}
+
+	return login, nil
 }
