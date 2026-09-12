@@ -25,17 +25,17 @@ func (r *profile) UrlOTP(ctx context.Context, accessHash string) (string, error)
 
 	url, isValid, err := r.accCache.Get(ctx, otpCacheKey(*uuid))
 	if err == nil && isValid {
-		return url, nil
+		deURL, err := r.jwtHashing.Decrypt(url)
+		if err != nil {
+			return "", fmt.Errorf("UrlOTP.Decrypt(Cache): %w", err)
+		}
+
+		return deURL, nil
 	}
 
-	login, err := r.usersRepo.LoginByUUID(ctx, uuid)
+	url, err = r.usersRepo.URLByUUID(ctx, uuid)
 	if pointer.Get(uuid) == "" {
 		return "", fmt.Errorf("UrlOTP.LoginByUUID: %w", err)
-	}
-
-	url, err = r.otpRepo.GenerateUrl(login)
-	if err != nil {
-		return "", fmt.Errorf("UrlOTP.GenerateURL: %w", err)
 	}
 
 	r.accCache.Set(ctx, inmem.AccessCacheRequest{
@@ -43,7 +43,12 @@ func (r *profile) UrlOTP(ctx context.Context, accessHash string) (string, error)
 		Value: url,
 	})
 
-	return url, err
+	deURL, err := r.jwtHashing.Decrypt(url)
+	if err != nil {
+		return "", fmt.Errorf("UrlOTP.Decrypt: %w", err)
+	}
+
+	return deURL, nil
 }
 
 func (r *profile) Registration(ctx context.Context, login string) (string, error) {
@@ -61,9 +66,15 @@ func (r *profile) Registration(ctx context.Context, login string) (string, error
 		return "", nil
 	}
 
+	enUrl, err := r.jwtHashing.Encrypt(url)
+	if err != nil {
+		return "", fmt.Errorf("Registration.Encrypt: %w", err)
+	}
+
 	if err := r.usersRepo.Register(ctx, entity.RegisterParams{
-		Login: &login,
-		Hash:  &hash,
+		Login: login,
+		Hash:  hash,
+		URL:   enUrl,
 	}); err != nil {
 		return "", fmt.Errorf("Registration.Register: %w", err)
 	}
@@ -76,7 +87,7 @@ func (r *profile) Registration(ctx context.Context, login string) (string, error
 
 		r.accCache.Set(ctx, inmem.AccessCacheRequest{
 			Key:   otpCacheKey(uuid),
-			Value: url,
+			Value: enUrl,
 		})
 	}()
 

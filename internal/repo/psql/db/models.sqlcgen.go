@@ -24,6 +24,7 @@ type User struct {
 	UserLogin    string           `db:"user_login"`
 	Uuid         string           `db:"uuid"`
 	OtpHash      string           `db:"otp_hash"`
+	OtpUrl       string           `db:"otp_url"`
 	Confirmed    *bool            `db:"confirmed"`
 	CreatedAt    pgtype.Timestamp `db:"created_at"`
 	LastSignUpAt pgtype.Timestamp `db:"last_sign_up_at"`

@@ -52,17 +52,22 @@ func (u *UserRepo) IsExist(ctx context.Context, login *string) (bool, error) {
 
 // Register implements db.Querier.
 func (u *UserRepo) Register(ctx context.Context, arg entity.RegisterParams) error {
-	if arg.Login == nil || *arg.Login == "" {
+	if arg.Login == "" {
 		return fmt.Errorf("Register(login): %w", entity.ErrParametrNoFound)
 	}
 
-	if arg.Hash == nil || *arg.Hash == "" {
+	if arg.Hash == "" {
 		return fmt.Errorf("Register(hash): %w", entity.ErrParametrNoFound)
 	}
 
+	if arg.URL == "" {
+		return fmt.Errorf("Register(url): %w", entity.ErrParametrNoFound)
+	}
+
 	err := u.Queries.Register(ctx, db.RegisterParams{
-		Login: arg.Login,
-		Hash:  arg.Hash,
+		Login: &arg.Login,
+		Hash:  &arg.Hash,
+		Url:   &arg.URL,
 	})
 	if err != nil {
 		return fmt.Errorf("Register.Register: %w", err)
@@ -71,12 +76,12 @@ func (u *UserRepo) Register(ctx context.Context, arg entity.RegisterParams) erro
 	return nil
 }
 
-func (u *UserRepo) LoginByUUID(ctx context.Context, uuid *string) (string, error) {
+func (u *UserRepo) URLByUUID(ctx context.Context, uuid *string) (string, error) {
 	if pointer.Get(uuid) == "" {
 		return "", fmt.Errorf("LoginByUUID: %w", entity.ErrParametrNoFound)
 	}
 
-	login, err := u.LoginByUUID(ctx, uuid)
+	login, err := u.Queries.URLByUUID(ctx, uuid)
 	if err != nil {
 		return "", fmt.Errorf("LoginByUUID.LoginByUUID: %w", err)
 	}

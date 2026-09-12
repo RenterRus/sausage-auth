@@ -1,8 +1,9 @@
 package entity
 
 type RegisterParams struct {
-	Login *string
-	Hash  *string
+	Login string
+	Hash  string
+	URL   string
 }
 
 type GetRefreshTokenRow struct {

@@ -20,18 +20,6 @@ func NewOTPManager(hashing hashing.Hashing, issuer string) OTP {
 	}
 }
 
-func (o *otpManager) GenerateUrl(username string) (string, error) {
-	key, err := totp.Generate(totp.GenerateOpts{
-		Issuer:      o.issuer,
-		AccountName: username,
-	})
-	if err != nil {
-		return "", err
-	}
-
-	return key.URL(), nil
-}
-
 func (o *otpManager) GenerateHash(username string) (string, string, error) {
 	// Генерируем ключ
 	key, err := totp.Generate(totp.GenerateOpts{
