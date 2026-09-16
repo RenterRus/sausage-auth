@@ -13,13 +13,9 @@ type Querier interface {
 	//
 	//  update users set confirmed = true where user_login = $1
 	Confirmed(ctx context.Context, login *string) error
-	//DeleteOldRefresh
-	//
-	//  delete from refreshlist where user_login = $1 and user_agent = $2 returning refresh_hash
-	DeleteOldRefresh(ctx context.Context, arg DeleteOldRefreshParams) ([]string, error)
 	//GetRefreshToken
 	//
-	//  select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent,
+	//  select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent, r.user_login,
 	//  exists(select 1 from blacklist_refresh b where b.refresh_hash = r.refresh_hash) as block
 	//  from refreshlist r where r.user_login = $1 and r.refresh_hash = $2 and r.user_agent = $3
 	GetRefreshToken(ctx context.Context, arg GetRefreshTokenParams) (GetRefreshTokenRow, error)
@@ -39,6 +35,14 @@ type Querier interface {
 	//
 	//  insert into users (user_login, uuid, otp_hash, otp_url, created_at, last_sign_up_at) values ($1, gen_random_uuid(), $2, $3, now(), now())
 	Register(ctx context.Context, arg RegisterParams) error
+	//RemoveOldRefresh
+	//
+	//  delete from refreshlist where refresh_hash = $1 and user_agent = $2 returning refresh_hash, user_login
+	RemoveOldRefresh(ctx context.Context, arg RemoveOldRefreshParams) ([]RemoveOldRefreshRow, error)
+	//RemoveOldRefreshByLoginUA
+	//
+	//  delete from refreshlist where refresh_hash = $1 and user_agent = $2 returning refresh_hash, user_login
+	RemoveOldRefreshByLoginUA(ctx context.Context, arg RemoveOldRefreshByLoginUAParams) ([]RemoveOldRefreshByLoginUARow, error)
 	//RemoveRefreshByHash
 	//
 	//  delete from refreshlist where refresh_hash = $1

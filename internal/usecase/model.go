@@ -20,7 +20,6 @@ type LoginRequest struct {
 }
 
 type RefreshRequest struct {
-	Login        string
 	UserAgent    string
 	RefreshToken string
 }

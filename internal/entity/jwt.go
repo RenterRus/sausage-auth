@@ -7,6 +7,16 @@ type BaseJWT struct {
 }
 
 type DeleteOldRefreshParams struct {
-	UserLogin *string
-	UserAgent *string
+	Refresh   string
+	UserAgent string
+}
+
+type RemoveOldRefreshByLoginUA struct {
+	Login     string
+	UserAgent string
+}
+
+type OldRefreshResponse struct {
+	Refresh string
+	Login   string
 }

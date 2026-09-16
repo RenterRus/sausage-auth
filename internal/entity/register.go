@@ -11,6 +11,7 @@ type GetRefreshTokenRow struct {
 	IsExpired   bool
 	Block       bool
 	UserAgent   *string
+	Login       string
 }
 
 type SetRefreshHashParams struct {

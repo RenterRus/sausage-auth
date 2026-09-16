@@ -92,9 +92,9 @@ func (r *profile) LoginOTP(ctx context.Context, req LoginRequest) (entity.Tokens
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.isValid: %w", entity.ErrCodeInvalid)
 	}
 
-	hashs, err := r.usersRepo.DeleteOldRefresh(ctx, entity.DeleteOldRefreshParams{
-		UserLogin: &req.Login,
-		UserAgent: &req.UserAgent,
+	hashs, err := r.usersRepo.RemoveOldRefreshByLoginUA(ctx, entity.RemoveOldRefreshByLoginUA{
+		Login:     req.Login,
+		UserAgent: req.UserAgent,
 	})
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.DeleteOldRefresh: %w", err)
@@ -102,7 +102,7 @@ func (r *profile) LoginOTP(ctx context.Context, req LoginRequest) (entity.Tokens
 
 	if len(hashs) > 0 {
 		for i := range hashs {
-			if err := r.usersRepo.SetBlockRefresh(ctx, &hashs[i]); err != nil {
+			if err := r.usersRepo.SetBlockRefresh(ctx, &hashs[i].Refresh); err != nil {
 				return entity.Tokens{}, fmt.Errorf("LoginOTP.SetBlockRefresh: %w", err)
 			}
 		}
@@ -156,7 +156,6 @@ func (r *profile) LoginOTP(ctx context.Context, req LoginRequest) (entity.Tokens
 
 func (r *profile) Refresh(ctx context.Context, req RefreshRequest) (entity.Tokens, error) {
 	oldRef, err := r.usersRepo.GetRefreshToken(ctx, psql.GetRefreshReq{
-		Login:     &req.Login,
 		Hash:      &req.RefreshToken,
 		UserAgent: &req.UserAgent,
 	})
@@ -173,8 +172,8 @@ func (r *profile) Refresh(ctx context.Context, req RefreshRequest) (entity.Token
 	}
 
 	hashs, err := r.usersRepo.DeleteOldRefresh(ctx, entity.DeleteOldRefreshParams{
-		UserLogin: &req.Login,
-		UserAgent: &req.UserAgent,
+		Refresh:   req.RefreshToken,
+		UserAgent: req.UserAgent,
 	})
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.DeleteOldRefresh: %w", err)
@@ -182,18 +181,18 @@ func (r *profile) Refresh(ctx context.Context, req RefreshRequest) (entity.Token
 
 	if len(hashs) > 0 {
 		for i := range hashs {
-			if err := r.usersRepo.SetBlockRefresh(ctx, &hashs[i]); err != nil {
+			if err := r.usersRepo.SetBlockRefresh(ctx, &hashs[i].Refresh); err != nil {
 				return entity.Tokens{}, fmt.Errorf("LoginOTP.SetBlockRefresh: %w", err)
 			}
 		}
 	}
 
-	access, err := r.jwtManager.GenAccess(req.Login)
+	access, err := r.jwtManager.GenAccess(oldRef.Login)
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.GenAccess: %w", err)
 	}
 
-	refresh, err := r.jwtManager.GenRefresh(req.Login)
+	refresh, err := r.jwtManager.GenRefresh(oldRef.Login)
 	if err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.GenRefresh: %w", err)
 	}
@@ -211,16 +210,16 @@ func (r *profile) Refresh(ctx context.Context, req RefreshRequest) (entity.Token
 	if err = r.usersRepo.SetRefreshHash(ctx, entity.SetRefreshHashParams{
 		RefreshHash: &hashRefresh,
 		UserAgent:   &req.UserAgent,
-		Login:       &req.Login,
+		Login:       &oldRef.Login,
 	}); err != nil {
 		return entity.Tokens{}, fmt.Errorf("LoginOTP.SetRefreshHash: %w", err)
 	}
 
-	if err = r.usersRepo.UpdateLastSighUp(ctx, &req.Login); err != nil {
+	if err = r.usersRepo.UpdateLastSighUp(ctx, &oldRef.Login); err != nil {
 		fmt.Println("!!! INTO LOG. UpdateLastSighUp:", err)
 	}
 
-	uuid, err := r.usersRepo.GetUUIDByLogin(ctx, &req.Login)
+	uuid, err := r.usersRepo.GetUUIDByLogin(ctx, &oldRef.Login)
 	if err == nil {
 		r.accCache.Set(ctx, inmem.AccessCacheRequest{
 			Key:   hashAccess,

@@ -28,7 +28,8 @@ type UsersRepo interface {
 	RemoveRefreshByHash(ctx context.Context, refreshHash *string) error
 	RemoveRefreshByLogin(ctx context.Context, userLogin *string) ([]string, error)
 
-	DeleteOldRefresh(ctx context.Context, arg entity.DeleteOldRefreshParams) ([]string, error)
+	DeleteOldRefresh(ctx context.Context, arg entity.DeleteOldRefreshParams) ([]entity.OldRefreshResponse, error)
+	RemoveOldRefreshByLoginUA(ctx context.Context, arg entity.RemoveOldRefreshByLoginUA) ([]entity.OldRefreshResponse, error)
 
 	UpdateLastSighUp(ctx context.Context, userLogin *string) error
 }

@@ -65,9 +65,8 @@ message LoginOTPResponse{
 }
 
 message RefreshRequest{
-  string login = 1;
-  string userAgent = 2;
-  string refreshToken = 3;
+  string userAgent = 1;
+  string refreshToken = 2;
 }
 
 message RefreshResponse{

@@ -9,40 +9,8 @@ import (
 	"context"
 )
 
-const deleteOldRefresh = `-- name: DeleteOldRefresh :many
-delete from refreshlist where user_login = $1 and user_agent = $2 returning refresh_hash
-`
-
-type DeleteOldRefreshParams struct {
-	UserLogin *string `db:"user_login"`
-	UserAgent *string `db:"user_agent"`
-}
-
-// DeleteOldRefresh
-//
-//	delete from refreshlist where user_login = $1 and user_agent = $2 returning refresh_hash
-func (q *Queries) DeleteOldRefresh(ctx context.Context, arg DeleteOldRefreshParams) ([]string, error) {
-	rows, err := q.db.Query(ctx, deleteOldRefresh, arg.UserLogin, arg.UserAgent)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []string
-	for rows.Next() {
-		var refresh_hash string
-		if err := rows.Scan(&refresh_hash); err != nil {
-			return nil, err
-		}
-		items = append(items, refresh_hash)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const getRefreshToken = `-- name: GetRefreshToken :one
-select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent,
+select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent, r.user_login,
 exists(select 1 from blacklist_refresh b where b.refresh_hash = r.refresh_hash) as block 
 from refreshlist r where r.user_login = $1 and r.refresh_hash = $2 and r.user_agent = $3
 `
@@ -57,12 +25,13 @@ type GetRefreshTokenRow struct {
 	RefreshHash string  `db:"refresh_hash"`
 	IsExpired   bool    `db:"is_expired"`
 	UserAgent   *string `db:"user_agent"`
+	UserLogin   string  `db:"user_login"`
 	Block       bool    `db:"block"`
 }
 
 // GetRefreshToken
 //
-//	select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent,
+//	select r.refresh_hash, (expired_at <= now()) as is_expired, r.user_agent, r.user_login,
 //	exists(select 1 from blacklist_refresh b where b.refresh_hash = r.refresh_hash) as block
 //	from refreshlist r where r.user_login = $1 and r.refresh_hash = $2 and r.user_agent = $3
 func (q *Queries) GetRefreshToken(ctx context.Context, arg GetRefreshTokenParams) (GetRefreshTokenRow, error) {
@@ -72,6 +41,7 @@ func (q *Queries) GetRefreshToken(ctx context.Context, arg GetRefreshTokenParams
 		&i.RefreshHash,
 		&i.IsExpired,
 		&i.UserAgent,
+		&i.UserLogin,
 		&i.Block,
 	)
 	return i, err
@@ -89,6 +59,80 @@ func (q *Queries) GetUUIDByLogin(ctx context.Context, login *string) (string, er
 	var uuid string
 	err := row.Scan(&uuid)
 	return uuid, err
+}
+
+const removeOldRefresh = `-- name: RemoveOldRefresh :many
+delete from refreshlist where refresh_hash = $1 and user_agent = $2 returning refresh_hash, user_login
+`
+
+type RemoveOldRefreshParams struct {
+	RefreshHash *string `db:"refresh_hash"`
+	UserAgent   *string `db:"user_agent"`
+}
+
+type RemoveOldRefreshRow struct {
+	RefreshHash string `db:"refresh_hash"`
+	UserLogin   string `db:"user_login"`
+}
+
+// RemoveOldRefresh
+//
+//	delete from refreshlist where refresh_hash = $1 and user_agent = $2 returning refresh_hash, user_login
+func (q *Queries) RemoveOldRefresh(ctx context.Context, arg RemoveOldRefreshParams) ([]RemoveOldRefreshRow, error) {
+	rows, err := q.db.Query(ctx, removeOldRefresh, arg.RefreshHash, arg.UserAgent)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RemoveOldRefreshRow
+	for rows.Next() {
+		var i RemoveOldRefreshRow
+		if err := rows.Scan(&i.RefreshHash, &i.UserLogin); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const removeOldRefreshByLoginUA = `-- name: RemoveOldRefreshByLoginUA :many
+delete from refreshlist where refresh_hash = $1 and user_agent = $2 returning refresh_hash, user_login
+`
+
+type RemoveOldRefreshByLoginUAParams struct {
+	UserLogin *string `db:"user_login"`
+	UserAgent *string `db:"user_agent"`
+}
+
+type RemoveOldRefreshByLoginUARow struct {
+	RefreshHash string `db:"refresh_hash"`
+	UserLogin   string `db:"user_login"`
+}
+
+// RemoveOldRefreshByLoginUA
+//
+//	delete from refreshlist where refresh_hash = $1 and user_agent = $2 returning refresh_hash, user_login
+func (q *Queries) RemoveOldRefreshByLoginUA(ctx context.Context, arg RemoveOldRefreshByLoginUAParams) ([]RemoveOldRefreshByLoginUARow, error) {
+	rows, err := q.db.Query(ctx, removeOldRefreshByLoginUA, arg.UserLogin, arg.UserAgent)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RemoveOldRefreshByLoginUARow
+	for rows.Next() {
+		var i RemoveOldRefreshByLoginUARow
+		if err := rows.Scan(&i.RefreshHash, &i.UserLogin); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const removeRefreshByHash = `-- name: RemoveRefreshByHash :exec

@@ -577,9 +577,8 @@ func (x *LoginOTPResponse) GetTokens() *Tokens {
 
 type RefreshRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Login         string                 `protobuf:"bytes,1,opt,name=login,proto3" json:"login,omitempty"`
-	UserAgent     string                 `protobuf:"bytes,2,opt,name=userAgent,proto3" json:"userAgent,omitempty"`
-	RefreshToken  string                 `protobuf:"bytes,3,opt,name=refreshToken,proto3" json:"refreshToken,omitempty"`
+	UserAgent     string                 `protobuf:"bytes,1,opt,name=userAgent,proto3" json:"userAgent,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refreshToken,proto3" json:"refreshToken,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -612,13 +611,6 @@ func (x *RefreshRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RefreshRequest.ProtoReflect.Descriptor instead.
 func (*RefreshRequest) Descriptor() ([]byte, []int) {
 	return file_docs_proto_v1_auth_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *RefreshRequest) GetLogin() string {
-	if x != nil {
-		return x.Login
-	}
-	return ""
 }
 
 func (x *RefreshRequest) GetUserAgent() string {
@@ -891,11 +883,10 @@ const file_docs_proto_v1_auth_proto_rawDesc = "" +
 	"\tuserAgent\x18\x02 \x01(\tR\tuserAgent\x12\x12\n" +
 	"\x04code\x18\x03 \x01(\tR\x04code\";\n" +
 	"\x10LoginOTPResponse\x12'\n" +
-	"\x06tokens\x18\x01 \x01(\v2\x0f.auth.v1.TokensR\x06tokens\"h\n" +
-	"\x0eRefreshRequest\x12\x14\n" +
-	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1c\n" +
-	"\tuserAgent\x18\x02 \x01(\tR\tuserAgent\x12\"\n" +
-	"\frefreshToken\x18\x03 \x01(\tR\frefreshToken\":\n" +
+	"\x06tokens\x18\x01 \x01(\v2\x0f.auth.v1.TokensR\x06tokens\"R\n" +
+	"\x0eRefreshRequest\x12\x1c\n" +
+	"\tuserAgent\x18\x01 \x01(\tR\tuserAgent\x12\"\n" +
+	"\frefreshToken\x18\x02 \x01(\tR\frefreshToken\":\n" +
 	"\x0fRefreshResponse\x12'\n" +
 	"\x06tokens\x18\x01 \x01(\v2\x0f.auth.v1.TokensR\x06tokens\"'\n" +
 	"\rUrlOTPRequest\x12\x16\n" +

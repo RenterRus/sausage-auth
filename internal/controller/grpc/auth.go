@@ -86,7 +86,6 @@ func (m *Manager) RefreshToken(ctx context.Context, req *proto.RefreshRequest) (
 	}
 
 	tokens, err := m.profile.Refresh(ctx, usecase.RefreshRequest{
-		Login:        req.GetLogin(),
 		UserAgent:    req.GetUserAgent(),
 		RefreshToken: req.GetRefreshToken(),
 	})

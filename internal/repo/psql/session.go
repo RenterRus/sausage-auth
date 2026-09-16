@@ -7,6 +7,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/RenterRus/sausage-auth/internal/entity"
 	"github.com/RenterRus/sausage-auth/internal/repo/psql/db"
+	"github.com/samber/lo"
 )
 
 func (u *UserRepo) GetRefreshToken(ctx context.Context, req GetRefreshReq) (entity.GetRefreshTokenRow, error) {
@@ -28,6 +29,7 @@ func (u *UserRepo) GetRefreshToken(ctx context.Context, req GetRefreshReq) (enti
 		IsExpired:   resp.IsExpired,
 		Block:       resp.Block,
 		UserAgent:   resp.UserAgent,
+		Login:       resp.UserLogin,
 	}, nil
 }
 
@@ -93,20 +95,46 @@ func (u *UserRepo) RemoveRefreshByLogin(ctx context.Context, userLogin *string) 
 	return refreshs, nil
 }
 
-func (u *UserRepo) DeleteOldRefresh(ctx context.Context, arg entity.DeleteOldRefreshParams) ([]string, error) {
-	if pointer.Get(arg.UserAgent) == "" || pointer.Get(arg.UserLogin) == "" {
+func (u *UserRepo) RemoveOldRefreshByLoginUA(ctx context.Context, arg entity.RemoveOldRefreshByLoginUA) ([]entity.OldRefreshResponse, error) {
+	if arg.UserAgent == "" || arg.Login == "" {
 		return nil, fmt.Errorf("DeleteOldRefresh(validation): %w", entity.ErrParametrNoFound)
 	}
 
-	hashs, err := u.Queries.DeleteOldRefresh(ctx, db.DeleteOldRefreshParams{
-		UserLogin: arg.UserLogin,
-		UserAgent: arg.UserAgent,
+	hashs, err := u.Queries.RemoveOldRefreshByLoginUA(ctx, db.RemoveOldRefreshByLoginUAParams{
+		UserLogin: &arg.Login,
+		UserAgent: &arg.UserAgent,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("DeleteOldRefresh: %w", err)
 	}
 
-	return hashs, nil
+	return lo.Map(hashs, func(item db.RemoveOldRefreshByLoginUARow, _ int) entity.OldRefreshResponse {
+		return entity.OldRefreshResponse{
+			Refresh: item.RefreshHash,
+			Login:   item.UserLogin,
+		}
+	}), nil
+}
+
+func (u *UserRepo) DeleteOldRefresh(ctx context.Context, arg entity.DeleteOldRefreshParams) ([]entity.OldRefreshResponse, error) {
+	if arg.UserAgent == "" || arg.Refresh == "" {
+		return nil, fmt.Errorf("DeleteOldRefresh(validation): %w", entity.ErrParametrNoFound)
+	}
+
+	hashs, err := u.Queries.RemoveOldRefresh(ctx, db.RemoveOldRefreshParams{
+		RefreshHash: &arg.Refresh,
+		UserAgent:   &arg.UserAgent,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("DeleteOldRefresh: %w", err)
+	}
+
+	return lo.Map(hashs, func(item db.RemoveOldRefreshRow, _ int) entity.OldRefreshResponse {
+		return entity.OldRefreshResponse{
+			Refresh: item.RefreshHash,
+			Login:   item.UserLogin,
+		}
+	}), nil
 }
 
 func (u *UserRepo) UpdateLastSighUp(ctx context.Context, userLogin *string) error {
