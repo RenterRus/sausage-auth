@@ -62,7 +62,7 @@ message LoginOTPRequest{
 
 message LoginOTPResponse{
   Tokens tokens = 1;
-    string UUID = 2;
+  string uuid = 2;
 }
 
 message RefreshRequest{
@@ -72,7 +72,7 @@ message RefreshRequest{
 
 message RefreshResponse{
   Tokens tokens = 1;
-  string UUID = 2;
+  string uuid = 2;
 }
 
 

@@ -534,7 +534,7 @@ func (x *LoginOTPRequest) GetCode() string {
 type LoginOTPResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Tokens        *Tokens                `protobuf:"bytes,1,opt,name=tokens,proto3" json:"tokens,omitempty"`
-	UUID          string                 `protobuf:"bytes,2,opt,name=UUID,proto3" json:"UUID,omitempty"`
+	Uuid          string                 `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -576,9 +576,9 @@ func (x *LoginOTPResponse) GetTokens() *Tokens {
 	return nil
 }
 
-func (x *LoginOTPResponse) GetUUID() string {
+func (x *LoginOTPResponse) GetUuid() string {
 	if x != nil {
-		return x.UUID
+		return x.Uuid
 	}
 	return ""
 }
@@ -638,7 +638,7 @@ func (x *RefreshRequest) GetRefreshToken() string {
 type RefreshResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Tokens        *Tokens                `protobuf:"bytes,1,opt,name=tokens,proto3" json:"tokens,omitempty"`
-	UUID          string                 `protobuf:"bytes,2,opt,name=UUID,proto3" json:"UUID,omitempty"`
+	Uuid          string                 `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -680,9 +680,9 @@ func (x *RefreshResponse) GetTokens() *Tokens {
 	return nil
 }
 
-func (x *RefreshResponse) GetUUID() string {
+func (x *RefreshResponse) GetUuid() string {
 	if x != nil {
-		return x.UUID
+		return x.Uuid
 	}
 	return ""
 }
@@ -900,13 +900,13 @@ const file_docs_proto_v1_auth_proto_rawDesc = "" +
 	"\x04code\x18\x03 \x01(\tR\x04code\"O\n" +
 	"\x10LoginOTPResponse\x12'\n" +
 	"\x06tokens\x18\x01 \x01(\v2\x0f.auth.v1.TokensR\x06tokens\x12\x12\n" +
-	"\x04UUID\x18\x02 \x01(\tR\x04UUID\"R\n" +
+	"\x04uuid\x18\x02 \x01(\tR\x04uuid\"R\n" +
 	"\x0eRefreshRequest\x12\x1c\n" +
 	"\tuserAgent\x18\x01 \x01(\tR\tuserAgent\x12\"\n" +
 	"\frefreshToken\x18\x02 \x01(\tR\frefreshToken\"N\n" +
 	"\x0fRefreshResponse\x12'\n" +
 	"\x06tokens\x18\x01 \x01(\v2\x0f.auth.v1.TokensR\x06tokens\x12\x12\n" +
-	"\x04UUID\x18\x02 \x01(\tR\x04UUID\"'\n" +
+	"\x04uuid\x18\x02 \x01(\tR\x04uuid\"'\n" +
 	"\rUrlOTPRequest\x12\x16\n" +
 	"\x06access\x18\x01 \x01(\tR\x06access\"\"\n" +
 	"\x0eUrlOTPResponse\x12\x10\n" +

@@ -77,7 +77,7 @@ func (m *Manager) LoginOTP(ctx context.Context, req *proto.LoginOTPRequest) (*pr
 			Access:  tokens.AccessToken,
 			Refresh: tokens.RefreshToken,
 		},
-		UUID: tokens.UUID,
+		Uuid: tokens.UUID,
 	}, nil
 }
 
@@ -99,6 +99,6 @@ func (m *Manager) RefreshToken(ctx context.Context, req *proto.RefreshRequest) (
 			Access:  tokens.AccessToken,
 			Refresh: tokens.RefreshToken,
 		},
-		UUID: tokens.UUID,
+		Uuid: tokens.UUID,
 	}, nil
 }
