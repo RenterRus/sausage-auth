@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"errors"
 
 	"github.com/AlekSi/pointer"
 	proto "github.com/RenterRus/sausage-auth/docs/proto/v1"
@@ -43,8 +44,13 @@ func (m *Manager) ValidateToken(ctx context.Context, req *proto.ValidateTokenReq
 	}
 
 	uuid, err := m.profile.Validation(ctx, req.GetAccess())
+	st := codes.Internal
+	if errors.Is(err, entity.ErrTokenExpired) {
+		st = codes.DeadlineExceeded
+	}
+
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "ValidateToken.Validation: %s", err.Error())
+		return nil, status.Errorf(st, "ValidateToken.Validation: %s", err.Error())
 	}
 
 	return &proto.ValidateTokenResponse{
