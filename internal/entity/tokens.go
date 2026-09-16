@@ -1,6 +1,7 @@
 package entity
 
 type Tokens struct {
-	AccessToken  *string
-	RefreshToken *string
+	UUID         string
+	AccessToken  string
+	RefreshToken string
 }

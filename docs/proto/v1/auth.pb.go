@@ -534,6 +534,7 @@ func (x *LoginOTPRequest) GetCode() string {
 type LoginOTPResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Tokens        *Tokens                `protobuf:"bytes,1,opt,name=tokens,proto3" json:"tokens,omitempty"`
+	UUID          string                 `protobuf:"bytes,2,opt,name=UUID,proto3" json:"UUID,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -573,6 +574,13 @@ func (x *LoginOTPResponse) GetTokens() *Tokens {
 		return x.Tokens
 	}
 	return nil
+}
+
+func (x *LoginOTPResponse) GetUUID() string {
+	if x != nil {
+		return x.UUID
+	}
+	return ""
 }
 
 type RefreshRequest struct {
@@ -630,6 +638,7 @@ func (x *RefreshRequest) GetRefreshToken() string {
 type RefreshResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Tokens        *Tokens                `protobuf:"bytes,1,opt,name=tokens,proto3" json:"tokens,omitempty"`
+	UUID          string                 `protobuf:"bytes,2,opt,name=UUID,proto3" json:"UUID,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -669,6 +678,13 @@ func (x *RefreshResponse) GetTokens() *Tokens {
 		return x.Tokens
 	}
 	return nil
+}
+
+func (x *RefreshResponse) GetUUID() string {
+	if x != nil {
+		return x.UUID
+	}
+	return ""
 }
 
 type UrlOTPRequest struct {
@@ -881,14 +897,16 @@ const file_docs_proto_v1_auth_proto_rawDesc = "" +
 	"\x0fLoginOTPRequest\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1c\n" +
 	"\tuserAgent\x18\x02 \x01(\tR\tuserAgent\x12\x12\n" +
-	"\x04code\x18\x03 \x01(\tR\x04code\";\n" +
+	"\x04code\x18\x03 \x01(\tR\x04code\"O\n" +
 	"\x10LoginOTPResponse\x12'\n" +
-	"\x06tokens\x18\x01 \x01(\v2\x0f.auth.v1.TokensR\x06tokens\"R\n" +
+	"\x06tokens\x18\x01 \x01(\v2\x0f.auth.v1.TokensR\x06tokens\x12\x12\n" +
+	"\x04UUID\x18\x02 \x01(\tR\x04UUID\"R\n" +
 	"\x0eRefreshRequest\x12\x1c\n" +
 	"\tuserAgent\x18\x01 \x01(\tR\tuserAgent\x12\"\n" +
-	"\frefreshToken\x18\x02 \x01(\tR\frefreshToken\":\n" +
+	"\frefreshToken\x18\x02 \x01(\tR\frefreshToken\"N\n" +
 	"\x0fRefreshResponse\x12'\n" +
-	"\x06tokens\x18\x01 \x01(\v2\x0f.auth.v1.TokensR\x06tokens\"'\n" +
+	"\x06tokens\x18\x01 \x01(\v2\x0f.auth.v1.TokensR\x06tokens\x12\x12\n" +
+	"\x04UUID\x18\x02 \x01(\tR\x04UUID\"'\n" +
 	"\rUrlOTPRequest\x12\x16\n" +
 	"\x06access\x18\x01 \x01(\tR\x06access\"\"\n" +
 	"\x0eUrlOTPResponse\x12\x10\n" +

@@ -149,8 +149,9 @@ func (r *profile) LoginOTP(ctx context.Context, req LoginRequest) (entity.Tokens
 	}
 
 	return entity.Tokens{
-		AccessToken:  &hashAccess,
-		RefreshToken: &hashRefresh,
+		UUID:         uuid,
+		AccessToken:  hashAccess,
+		RefreshToken: hashRefresh,
 	}, nil
 }
 
@@ -228,7 +229,8 @@ func (r *profile) Refresh(ctx context.Context, req RefreshRequest) (entity.Token
 	}
 
 	return entity.Tokens{
-		AccessToken:  &hashAccess,
-		RefreshToken: &hashRefresh,
+		UUID:         uuid,
+		AccessToken:  hashAccess,
+		RefreshToken: hashRefresh,
 	}, nil
 }
